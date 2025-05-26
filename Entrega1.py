@@ -1,130 +1,172 @@
 """
 -----------------------------------------------------------------------------------------------
-Título:
-Fecha:
-Autor:
+Título: Empresa de viajes
+Fecha: 25/05/25
+Autor: Maia Medina, Eugenia Alonso, Lucas Rodriguez, Ciro Petrella y Caterina Turdo
 
-Descripción:
+Descripción: Sistema para gestion de paquetes de viajes
 
 Pendientes:
+Menu funcional e informes
 -----------------------------------------------------------------------------------------------
 """
 
-#----------------------------------------------------------------------------------------------
 # MÓDULOS
 #----------------------------------------------------------------------------------------------
 ...
 
-
-#----------------------------------------------------------------------------------------------
 # FUNCIONES
 #----------------------------------------------------------------------------------------------
 def altaCliente(_clientes):
     ...
     return _clientes
 
-
-
 #----------------------------------------------------------------------------------------------
 # CUERPO PRINCIPAL
 #----------------------------------------------------------------------------------------------
 def main():
-    #-------------------------------------------------
     # Inicialización de variables
-    #----------------------------------------------------------------------------------------------
     clientes = {...}
+    paquetes = {...}
+    contratos = {...}
 
-
-    #-------------------------------------------------
-    # Bloque de menú
-    #----------------------------------------------------------------------------------------------
     while True:
-        while True:
-            opciones = 5
-            print()
-            print("---------------------------")
-            print("MENÚ PRINCIPAL")
-            print("---------------------------")
-            print("[1] Gestión de clientes")
-            print("[2] Opción 2")
-            print("[3] Opción 3")
-            print("[4] Opción 4")
-            print("[5] Opción 5")
-            print("---------------------------")
-            print("[0] Salir del programa")
-            print("---------------------------")
-            print()
-            
-            opcionSubmenu = ""
-            opcionMenuPrincipal = input("Seleccione una opción: ")
-            if opcionMenuPrincipal in [str(i) for i in range(0, opciones + 1)]: # Sólo continua si se elije una opcion de menú válida
-                break
-            else:
-                input("Opción inválida. Presione ENTER para volver a seleccionar.")
+        # Menú principal
+        print()
+        print("---------------------------")
+        print("MENÚ PRINCIPAL")
+        print("---------------------------")
+        print("[1] Gestión de clientes")
+        print("[2] Gestión de paquetes")
+        print("[3] Gestión de contratos")
+        print("[4] Reportes")
+        print("[5] Ayuda")
+        print("---------------------------")
+        print("[0] Salir del programa")
+        print("---------------------------")
         print()
 
-        if opcionMenuPrincipal == "0": # Opción salir del programa
-            exit() # También puede ser sys.exit() para lo cual hay que importar el módulo sys
+        opcion = input("Seleccione una opción: ")
+        if opcion not in [str(i) for i in range(0,6)]:
+            input("Opción inválida. Presione ENTER para volver.")
+            continue
+        print()
 
-        elif opcionMenuPrincipal == "1":   # Opción 1 del menú principal
+        if opcion == "0":
+            exit()
+
+        # Gestión de clientes
+        if opcion == "1":
             while True:
-                while True:
-                    opciones = 4
-                    print()
-                    print("---------------------------")
-                    print("MENÚ PRINCIPAL > MENÚ DE CLIENTES")
-                    print("---------------------------")
-                    print("[1] Ingresar Clientes")
-                    print("[2] Opción 2")
-                    print("[3] Opción 3")
-                    print("[4] Opción 4")
-                    print("---------------------------")
-                    print("[0] Volver al menú anterior")
-                    print("---------------------------")
-                    print()
-                    
-                    opcionSubmenu = input("Seleccione una opción: ")
-                    if opcionSubmenu in [str(i) for i in range(0, opciones + 1)]: # Sólo continua si se elije una opcion de menú válida
-                        break
-                    else:
-                        input("Opción inválida. Presione ENTER para volver a seleccionar.")
+                print()
+                print("---------------------------")
+                print("MENÚ DE CLIENTES")
+                print("---------------------------")
+                print("[1] Alta cliente")
+                print("[2] Baja cliente")
+                print("[3] Modificar cliente")
+                print("---------------------------")
+                print("[0] Volver al menú principal")
+                print("---------------------------")
                 print()
 
-                if opcionSubmenu == "0": # Opción salir del submenú
-                    break # No sale del programa, sino que vuelve al menú anterior
-                
-                elif opcionSubmenu == "1":   # Opción 1 del submenú
-                    clientes = altaCliente(clientes)
-                    
-                elif opcionSubmenu == "2":   # Opción 2 del submenú
-                    ...
-                
-                elif opcionSubmenu == "3":   # Opción 3 del submenú
-                    ...
-                
-                elif opcionSubmenu == "4":   # Opción 4 del submenú
-                    ...
+                sub = input("Seleccione una opción: ")
+                if sub not in [str(i) for i in range(0,4)]:
+                    input("Opción inválida. Presione ENTER para volver.")
+                    continue
+                print()
+                if sub == "0": break
+                if sub == "1": clientes = altaCliente(clientes)
+                elif sub == "2": ...  # bajaCliente
+                elif sub == "3": ...  # modificarCliente
+                input("\nENTER para continuar.")
 
-                input("\nPresione ENTER para volver al menú.") # Pausa entre opciones
-                print("\n\n")
+        # Gestión de paquetes
+        elif opcion == "2":
+            while True:
+                print()
+                print("---------------------------")
+                print("MENÚ DE PAQUETES")
+                print("---------------------------")
+                print("[1] Alta paquete")
+                print("[2] Baja paquete")
+                print("[3] Modificar paquete")
+                print("---------------------------")
+                print("[0] Volver al menú principal")
+                print("---------------------------")
+                print()
 
+                sub = input("Seleccione una opción: ")
+                if sub not in [str(i) for i in range(0,4)]:
+                    input("Opción inválida. Presione ENTER para volver.")
+                    continue
+                print()
+                if sub == "0": break
+                if sub == "1": ...  # altaPaquete
+                elif sub == "2": ...  # bajaPaquete
+                elif sub == "3": ...  # modificarPaquete
+                input("\nENTER para continuar.")
 
-        elif opcionMenuPrincipal == "2":   # Opción 2 del menú principal
-            ...
-        
-        elif opcionMenuPrincipal == "3":   # Opción 3 del menú principal
-            ...
-        
-        elif opcionMenuPrincipal == "4":   # Opción 4 del menú principal
-            ...
+        # Gestión de contratos
+        elif opcion == "3":
+            while True:
+                print()
+                print("---------------------------")
+                print("MENÚ DE CONTRATOS")
+                print("---------------------------")
+                print("[1] Alta contrato")
+                print("[2] Baja contrato")
+                print("[3] Modificar contrato")
+                print("---------------------------")
+                print("[0] Volver al menú principal")
+                print("---------------------------")
+                print()
 
-        elif opcionMenuPrincipal == "5":   # Opción 5 del menú principal
-            ...
+                sub = input("Seleccione una opción: ")
+                if sub not in [str(i) for i in range(0,4)]:
+                    input("Opción inválida. Presione ENTER para volver.")
+                    continue
+                print()
+                if sub == "0": break
+                if sub == "1": ...  # altaContrato
+                elif sub == "2": ...  # bajaContrato
+                elif sub == "3": ...  # modificarContrato
+                input("\nENTER para continuar.")
 
-        if opcionSubmenu != "0": # Pausa entre opciones. No la realiza si se vuelve de un submenú
-            input("\nPresione ENTER para volver al menú.")
-            print("\n\n")
+        # Reportes
+        elif opcion == "4":
+            while True:
+                print()
+                print("---------------------------")
+                print("MENÚ DE REPORTES")
+                print("---------------------------")
+                print("[1] Listar operaciones del Mes en curso")
+                print("[2] Resumen Anual de Cantidad de Contratos por Paquete")
+                print("[3] Resumen Anual de Montos de Contratos por Paquete")
+                print("[4] Listar los 5 paquetes menos vendidos anualmente")
+                print("---------------------------")
+                print("[0] Volver al menú principal")
+                print("---------------------------")
+                print()
 
+                sub = input("Seleccione una opción: ")
+                if sub not in [str(i) for i in range(0,5)]:
+                    input("Opción inválida. Presione ENTER para volver.")
+                    continue
+                print()
+                if sub == "0": break
+                if sub == "1": ...  # listarClientesActivos
+                elif sub == "2": ...  # listarPaquetesVendidos
+                elif sub == "3": ...  # listarContratosVigentes
+                elif sub == "4": ...  # listar5PaquetesMenosVendidos
+                input("\nENTER para continuar.")
 
-# Punto de entrada al programa
-main()
+        # Ayuda
+        elif opcion == "5":
+            ...  # ayuda
+
+        # Pausa general
+        input("\nENTER para volver al menú principal.")
+
+if __name__ == "__main__":
+    main()
