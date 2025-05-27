@@ -10,10 +10,17 @@ Pendientes:
 Menu funcional e informes
 -----------------------------------------------------------------------------------------------
 """
+# Fecha de contrato (str) 
+# IDTurista (str)
+# IDPaquete (str)
+# Cantidad de personas (int)
+# Total (float)
+# Forma de pago (str)
 
 # MÓDULOS
 #----------------------------------------------------------------------------------------------
-...
+import datetime 
+
 
 # FUNCIONES
 #----------------------------------------------------------------------------------------------
@@ -21,6 +28,69 @@ def altaCliente(_clientes):
     ...
     return _clientes
 
+
+def altaContrato():
+    """
+    Solicita información al usuario para dar de alta un contrato de viaje.
+
+    Incluyendo el ID del turista, ID del paquete, cantidad de viajeros, medio de pago y la fecha del contrato.
+    Calcula también el total a abonar (actualmente en 0). 
+
+    Returns:
+    ID del turista (str)
+    ID del paquete (str)
+    Cantidad de viajeros (int)
+    Medio de pago (str)
+    Total a pagar (actualmente siempre 0) (int)
+    Fecha y hora del contrato
+    
+    """
+    _precio= 0 
+    _idTurista= str(input("Ingrese su ID de turista: "))
+    _idPaquete= str(input("Ingrese el ID del paquete a abonar: "))
+    _cantidadDeViajeros= int(input("Ingrese la cantidad de asistentes: "))
+    _medioDePago= str(input("Ingrese medio de pago a utilizar: "))
+    _total= _precio*_cantidadDeViajeros
+    _fechaDeContrato= datetime.datetime.now()
+
+    return _idTurista, _idPaquete, _cantidadDeViajeros, _medioDePago, _total, _fechaDeContrato
+
+
+def bajaContrato():
+    """
+    De baja un contrato de viaje, utilizando el ID de turista y el ID del paquete.  
+    Ademmás, registra la fecha y hora de la baja. 
+
+    Returns:
+    ID del turista (str)
+    ID del paquete (str)
+    Estado de cancelación (inicialmente `False`) (bool)
+    Fecha y hora de la baja del contrato
+    """
+    cancelado= False 
+    _idTurista= str(input("Ingrese su ID de turista: "))
+    _idPaquete= str(input("Ingrese el ID del paquete a dar de baja: "))
+    _fechaDeBaja= datetime.datetime.now()
+    
+    return _idTurista, _idPaquete, cancelado, _fechaDeBaja
+
+
+def modficarContrato():
+    """
+    Modifica un contrato de viaje.
+    Solicita el ID del turista y el ID del paquete,para realizar los cambios. 
+    Registra la fecha y hora en que se realiza la modificación.
+
+    Returns:
+    ID del turista (str)
+    ID del paquete (str)
+    Fecha y hora de la modificación del contrato
+    """
+    _idTurista= str(input("Ingrese su ID de turista: "))
+    _idPaquete= str(input("Ingrese el ID del paquete a modificar: "))
+    _fechaDeModificacion= datetime.datetime.now()
+    
+    return (_idTurista, _idPaquete,_fechaDeModificacion)
 #----------------------------------------------------------------------------------------------
 # CUERPO PRINCIPAL
 #----------------------------------------------------------------------------------------------
@@ -128,9 +198,15 @@ def main():
                     continue
                 print()
                 if sub == "0": break
-                if sub == "1": ...  # altaContrato
-                elif sub == "2": ...  # bajaContrato
-                elif sub == "3": ...  # modificarContrato
+                
+                if sub == "1": # altaContrato
+                    altaContrato()
+                    
+                elif sub == "2":# bajaContrato
+                    bajaContrato()
+                    
+                elif sub == "3":# modificarContrato
+                    modficarContrato() 
                 input("\nENTER para continuar.")
 
         # Reportes
