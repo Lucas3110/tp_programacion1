@@ -17,9 +17,6 @@ Menu funcional e informes
 # Forma de pago (str) -> VISA 
 
 
-#######UPDATES COMENTARIOS
-
-
 # MÓDULOS
 #----------------------------------------------------------------------------------------------
 import datetime 
@@ -374,6 +371,7 @@ def verificaIDpaquete(_idPaquete, _paquetes): ################# HACER DOCSTRING
     
     if _idPaquete in _paquetes:
         return True, _idPaquete
+    
     else:
         return False, _idPaquete 
  
@@ -393,7 +391,7 @@ def verificaIDturista (): ###Falta funciones turista.
 
 def verificaIDcontrato(_idContrato, _contratos): #Revisar el else. 
     '''Verifica que el número ingresado como ID de contrato sea valido. '''
-    if _idContrato in _contratos:
+    if _idContrato in _contratos: #Agregar una validación para que solo tome los contratos activos. 
         return True, _idContrato
     
     elif _idContrato not in _contratos: 
@@ -401,7 +399,7 @@ def verificaIDcontrato(_idContrato, _contratos): #Revisar el else.
     
     return
 
-def bajaContrato(_paquetes, _contratos):
+def bajaContrato(_paquetes, _contratos): 
     """
     De baja un contrato de viaje, utilizando el ID de turista y el ID del paquete.  
     Ademmás, registra la fecha y hora de la baja. 
@@ -412,19 +410,21 @@ def bajaContrato(_paquetes, _contratos):
     Estado de cancelación (inicialmente 'False') (bool)
     Fecha y hora de la baja del contrato
     """
-    cancelado= False 
+    cancelado= False #Eliminar 
     _idTurista= str(input("Ingrese su ID de turista: ")) #Falta validar ID turista.
     _idContrato= str(input("Ingrese el ID del contrato a dar de baja: "))
     
     _verificaNumeroDeContratoBool, _verificaNumeroDeContratoValor= verificaIDcontrato(_idContrato, _contratos)
     
     if _verificaNumeroDeContratoBool == True: 
-        cancelado= True 
+        cancelado= True #Eliminar 
         _fechaDeBaja= datetime.datetime.now()
         print("Cancelado con éxito. Fecha de cancelación: ", _fechaDeBaja)
         
-        contratoAeliminar= _contratos.pop(_verificaNumeroDeContratoValor) ##Revisar. NO eliminar, sólo desactivar.
-    
+        #contratoAeliminar= _contratos.pop(_verificaNumeroDeContratoValor) #Esto lo elimina, no lo desactiva. 
+        
+        _contratos[_idContrato]["activo"]= False
+        
         print(_contratos) ##Elimar. Solo verifico que se haya eliminado del diccionario de contratos. 
         
         return _idTurista, cancelado, _fechaDeBaja, _contratos
