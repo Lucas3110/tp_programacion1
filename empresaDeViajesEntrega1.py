@@ -183,25 +183,25 @@ def modificarPaquete(paquetes):
             nuevo = input("Nuevo nombre: ").strip()
             if nuevo != "":
                 paquete["nombre"] = nuevo
-                print("✔ Nombre actualizado.")
+                print("Nombre actualizado.")
 
         elif opcion == "2":
             nuevo = input("Nuevo destino: ").strip()
             if nuevo != "":
                 paquete["destino"] = nuevo
-                print("✔ Destino actualizado.")
+                print("Destino actualizado.")
 
         elif opcion == "3":
             nuevo = input("Nueva duración: ").strip()
             if nuevo != "":
                 paquete["duracion"] = nuevo
-                print("✔ Duración actualizada.")
+                print("Duración actualizada.")
 
         elif opcion == "4":
             nuevo = input("Nuevo valor por persona: ").strip().replace(",", ".")
             if esFloatValido(nuevo):
                 paquete["valor"] = float(nuevo)
-                print("✔ Valor actualizado.")
+                print("Valor actualizado.")
             else:
                 print("Valor inválido. No se modificó.")
 
@@ -209,13 +209,13 @@ def modificarPaquete(paquetes):
             nuevo = input("Nueva descripción: ").strip()
             if nuevo != "":
                 paquete["descripcion"] = nuevo
-                print("✔ Descripción actualizada.")
+                print("Descripción actualizada.")
 
         elif opcion == "6":
             nuevos_servicios = cargarServicios()
             if nuevos_servicios is not None:
                 paquete["servicios"] = nuevos_servicios
-                print("✔ Servicios actualizados.")
+                print("Servicios actualizados.")
             else:
                 print("Los servicios no fueron modificados.")
 
@@ -265,27 +265,44 @@ def eliminarPaquete(paquetes):
 # FUNCIONES PARA VISUALIZAR PAQUETES
 #----------------------------------------------------------------------------------------------
 def listarPaquetesActivos(paquetes):
+    """
+    Muestra todos los paquetes turísticos que estén activos.
+    """
     print("\n--- LISTADO DE PAQUETES ACTIVOS ---\n")
-
     hay_activos = False
 
     for id_paquete, datos in paquetes.items():
         if datos["activo"]:
             hay_activos = True
-            print(f"   ID: {id_paquete}")
-            print(f"   Nombre: {datos['nombre']}")
-            print(f"   Destino: {datos['destino']}")
-            print(f"   Duración: {datos['duracion']}")
-            print(f"   Valor por persona: ${datos['valor']}")
-            print(f"   Descripción: {datos['descripcion']}")
-            print("   Servicios:")
-            for tipo, lista in datos["servicios"].items():
-                for i, item in enumerate(lista, 1):
-                    print(f"     - {tipo.capitalize()} {i}: {item}")
+            mostrarPaquete(id_paquete, datos)
             print("-" * 50)
 
     if not hay_activos:
         print("No hay paquetes activos cargados.")
+
+
+def mostrarPaquete(id_paquete, datos):
+    """
+    Muestra los datos básicos de un paquete turístico.
+    """
+    print("ID:", id_paquete)
+    print("Nombre:", datos["nombre"])
+    print("Destino:", datos["destino"])
+    print("Duración:", datos["duracion"])
+    print("Valor por persona: $", datos["valor"])
+    print("Descripción:", datos["descripcion"])
+    print("Servicios:")
+    mostrarServicios(datos["servicios"])
+
+
+def mostrarServicios(servicios):
+    """
+    Muestra la lista de servicios agrupados por tipo.
+    """
+    for tipo, lista in servicios.items():
+        for i, item in enumerate(lista, 1):
+            print("- ", tipo, i, ":", item)
+
 
 # -------------------------------------
 # Funciones Contrato
@@ -499,9 +516,8 @@ def modficarContrato(_paquetes, _contratos):
     
     else:
         
-        
     
-    return (_idTurista, idContratoVerificadoValor, _fechaDeModificacion)
+        return (_idTurista, idContratoVerificadoValor, _fechaDeModificacion)
 
 #----------------------------------------------------------------------------------------------
 # CUERPO PRINCIPAL
@@ -818,7 +834,7 @@ def main():
                     continue
                 print()
                 if sub == "0": break
-                if sub == "1": clientes = altaCliente(clientes)
+                if sub == "1": clientes = altaClientes(clientes)
                 elif sub == "2": ...  # bajaCliente
                 elif sub == "3": ...  # modificarCliente
                 input("\nENTER para continuar.")
