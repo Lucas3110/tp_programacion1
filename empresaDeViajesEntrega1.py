@@ -12,9 +12,9 @@ Menu funcional e informes
 # Fecha de contrato (str) 
 # IDTurista (str)
 # IDPaquete (str) -> Usar la fecha del día (limpiar con un strip() o algo. 
-# Cantidad de personas (int) -> Hacer el cálculo del precio total del paquete si es más de una persona.
+# cantidadDePersonas (int) -> Hacer el cálculo del precio total del paquete si es más de una persona.
 # Total (float) 
-# Forma de pago (str) -> VISA 
+# formaDePago (str) -> VISA 
 
 
 # MÓDULOS
@@ -312,10 +312,10 @@ def altaContrato(_paquetes, _contratos):
     Fecha y hora de creación del contrato (datetime)
     ID del contrato generado (str)
     """
-    #Ingreso ID turista
+    #Ingreso idTurista
     _idTurista= str(input("Ingrese su ID de turista: ")) #FALTA VALIDACIÓN. 
     
-    #Ingreso ID paquete
+    #Ingreso idPaquete
     _idPaquete= str(input("Ingrese el ID del paquete a abonar: "))
     
     _verificaNumeroDePaqueteBool, _verificaNumeroDePaqueteValor= verificaIDpaquete(_idPaquete, _paquetes)
@@ -325,9 +325,9 @@ def altaContrato(_paquetes, _contratos):
         _idPaquete= str(input("Paquete no válido. Ingrese el ID del paquete a abonar: "))
         _verificaNumeroDePaqueteBool, _verificaNumeroDePaqueteValor= verificaIDpaquete(_idPaquete, _paquetes)
     
-    #Ingreso cantidad de personas 
+    #Ingreso cantidadDePersonas 
     _cantidadDeViajeros= int(input("Ingrese la cantidad de asistentes: "))
-    #Valida cantidad de personas
+    #Valida cantidadDePersonas
     cantidadAsistentesValidado= validaCantidadAsistentes(_cantidadDeViajeros)
     
     #Ingreso medio de pago 
@@ -352,11 +352,11 @@ def altaContrato(_paquetes, _contratos):
     _contratos[_idContrato] = {
         "activo": True,
         "fecha": _fechaDeContrato.strftime("%Y-%m-%d %H:%M:%S.%f"),
-        "ID turista": _idTurista,
-        "ID paquete": _verificaNumeroDePaqueteValor,
-        "Cantidad de personas": cantidadAsistentesValidado,
+        "idTurista": _idTurista,
+        "idPaquete": _verificaNumeroDePaqueteValor,
+        "cantidadDePersonas": cantidadAsistentesValidado,
         "Total": _total,
-        "Medios de pago": {
+        "formaDePago": {
             "Elegido por usuario": [_medioDePago] ####Revisar 
         }
     }
@@ -453,7 +453,7 @@ def bajaContrato(_paquetes, _contratos):
     None:
         Si el ID del contrato no es válido o el contrato ya está inactivo.
     """
-    _idTurista= str(input("Ingrese su ID de turista: ")) #Falta validar ID turista.
+    _idTurista= str(input("Ingrese su ID de turista: ")) #Falta validar idTurista.
     _idContrato= str(input("Ingrese el ID del contrato a dar de baja: "))
     
     _verificaNumeroDeContratoBool, _verificaNumeroDeContratoValor= verificaIDcontrato(_idContrato, _contratos)
@@ -489,7 +489,7 @@ def modficarContrato(_paquetes, _contratos):
     """
     _idTurista= str(input("Ingrese su ID de turista: "))
     _idContrato= str(input("Ingrese el ID del contrato a modificar: "))
-    _fechaDeModificacion= datetime.datetime.now() #Mover esto luego de que se haya hecho el cambio. 
+    _fechaDeModificacion= datetime.datetime.now() 
     
     #Verifica ID contrato
     idContratoVerificadoBool, idContratoVerificadoValor= verificaIDcontrato(_idContrato, _contratos)
@@ -503,8 +503,8 @@ def modficarContrato(_paquetes, _contratos):
         print("Opciones a modificar: ")
         print('''
 [1] Paquete
-[2] Cantidad de personas
-[3] Medios de pago
+[2] Cantidad de personas 
+[3] Forma de pago 
             ''')
         
         #Input de opción a modificar dentro del contrato
@@ -522,39 +522,41 @@ def modficarContrato(_paquetes, _contratos):
             idPaqueteValidadoBool, idPaqueteValidado= verificaIDpaquete(nuevoPaquete, _paquetes)
             
             if idPaqueteValidadoBool == True:
-                contrato["ID paquete"] = nuevoPaquete
+                contrato["idPaquete"] = nuevoPaquete
                 print("Cambio realizado con éxito.")
                 contrato["fecha"] = _fechaDeModificacion
+                contrato["Total"] = _paquetes[nuevoPaquete]["valor"] * contrato["cantidadDePersonas"]
                 
             else:
                 print("Paquete no encontrado. Intente de nuevo.")
                 
-        #Opción 2 - Cantidad de personas
+        #Opción 2 - cantidadDePersonas
         elif opcionAmodificar == "2":
-            nuevaCantidadDePersonas = int(input("Ingrese la nueva cantidad de personas: "))
+            nuevaCantidadDePersonas = int(input("Ingrese la nueva cantidadDePersonas: "))
             
-            #Valida el ingreso de cantidad de personas
+            #Valida el ingreso de cantidadDePersonas
             nuevaCantidadDePersonaValidado= validaCantidadAsistentes(nuevaCantidadDePersonas)
             
-            contrato["Cantidad de personas"] = nuevaCantidadDePersonaValidado
+            contrato["cantidadDePersonas"] = nuevaCantidadDePersonaValidado
             contrato["fecha"] = _fechaDeModificacion
+            contrato["Total"] = _paquetes[nuevoPaquete]["valor"] * contrato["cantidadDePersonas"]
             
             print("Cambio realizado con éxito.")
           
-        #Opción 3 - Medios de pago
+        #Opción 3 - formaDePago
         elif opcionAmodificar == "3":
-            print("\nIngrese los nuevos medios de pago separados por comas:")
-            billeteras = input("Billeteras virtuales: ").split(',')
-            tarjetas = input("Tarjetas: ").split(',')
-            otros = input("Otros: ").split(',')
+            print("Formas de pago disponibles: Efectivo, Transferencia, Tarjeta")
+            nuevaFormaDePago = input("Ingrese la nueva forma de pago: ").strip().capitalize()
 
-            contrato["Medios de pago"] = {
-                "Billeteras virtuales": [b.strip() for b in billeteras if b.strip()],
-                "Tarjetas": [t.strip() for t in tarjetas if t.strip()],
-                "Otros": [o.strip() for o in otros if o.strip()]
-        }
+        #Valida que la forma de pago ingresada sea correcta
+        if nuevaFormaDePago in ["Efectivo", "Transferencia", "Tarjeta"]:
+            contrato["formaDePago"] = nuevaFormaDePago
             contrato["fecha"] = _fechaDeModificacion
             print("Cambio realizado con éxito.")
+            
+        else:
+            print("Forma de pago no válida. No se realizó el cambio.")
+            return None
             
     return (_idTurista, idContratoVerificadoValor, _fechaDeModificacion)
 
@@ -697,133 +699,93 @@ def main():
     contratos = { "20000000000000": {
         "activo": True,
         "fecha": "2999-12-31 00:00:00.000000", #Fecha de alta de contrato 
-        "ID turista": "0", ####### FALTA
-        "ID paquete": "PQT002",
-        "Cantidad de personas": 1,
+        "idTurista": "0", ####### FALTA
+        "idPaquete": "PQT002",
+        "cantidadDePersonas": 1,
         "Total": paquetes["PQT002"]["valor"] ,  
-        "Medios de pago": {
-            "Billeteras virtuales": ["Mercadopago", "Brubank", "UALA"],
-            "Tarjetas": ["VISA", "MASTERCARD", "AMERICAN EXPRESS"],
-            "Otros": ["Transferencia", "Efectivo"]
-        }
+        "formaDePago":"Efectivo"
     },
                   
     "20000023456789": {
         "activo": True,
         "fecha": "2025-01-12 14:15:00.000000",
-        "ID turista": "1",
-        "ID paquete": "PQT001",
-        "Cantidad de personas": 3,
+        "idTurista": "1",
+        "idPaquete": "PQT001",
+        "cantidadDePersonas": 3,
         "Total": paquetes["PQT001"]["valor"] * 3,
-        "Medios de pago": {
-            "Billeteras virtuales": ["Mercadopago", "Prex"],
-            "Tarjetas": ["VISA", "CABAL"],
-            "Otros": ["Transferencia"]
-        }
+        "formaDePago":"Transferencia"
     },
     "20000034567890": {
         "activo": True,
         "fecha": "2024-11-20 09:00:00.000000",
-        "ID turista": "2",
-        "ID paquete": "PQT002",
-        "Cantidad de personas": 1,
+        "idTurista": "2",
+        "idPaquete": "PQT002",
+        "cantidadDePersonas": 1,
         "Total": paquetes["PQT002"]["valor"],
-        "Medios de pago": {
-            "Billeteras virtuales": ["Brubank"],
-            "Tarjetas": ["MASTERCARD"],
-            "Otros": ["Efectivo"]
-        }
+        "formaDePago":"Tarjeta"    
     },
     "20000045678901": {
         "activo":True,
         "fecha": "2024-12-01 08:00:00.000000",
-        "ID turista": "3",
-        "ID paquete": "PQT003",
-        "Cantidad de personas": 6,
+        "idTurista": "3",
+        "idPaquete": "PQT003",
+        "cantidadDePersonas": 6,
         "Total": paquetes["PQT003"]["valor"] * 6,
-        "Medios de pago": {
-            "Billeteras virtuales": [],
-            "Tarjetas": ["VISA"],
-            "Otros": ["Efectivo"]
-        }
+        "formaDePago":"Transferencia"
     },
     "20000056789012": {
         "activo": True,
         "fecha": "2025-03-10 12:00:00.000000",
-        "ID turista": "4",
-        "ID paquete": "PQT004",
-        "Cantidad de personas": 5,
+        "idTurista": "4",
+        "idPaquete": "PQT004",
+        "cantidadDePersonas": 5,
         "Total": paquetes["PQT004"]["valor"] * 5,
-        "Medios de pago": {
-            "Billeteras virtuales": ["Mercadopago", "UALA"],
-            "Tarjetas": ["AMERICAN EXPRESS"],
-            "Otros": []
-        }
+        "formaDePago":"Efectivo"
     },
     "20000067890123": {
         "activo": True,
         "fecha": "2025-04-05 16:45:00.000000",
-        "ID turista": "5",
-        "ID paquete": "PQT005",
-        "Cantidad de personas": 10,
+        "idTurista": "5",
+        "idPaquete": "PQT005",
+        "cantidadDePersonas": 10,
         "Total": paquetes["PQT005"]["valor"] * 10,
-        "Medios de pago": {
-            "Billeteras virtuales": ["Prex", "UALA"],
-            "Tarjetas": [],
-            "Otros": ["Transferencia", "Efectivo"]
-        }
+        "formaDePago": "Tarjeta"
     },
     "20000078901234": {
         "activo": True,
         "fecha": "2023-09-18 09:15:00.000000",
-        "ID turista": "6",
-        "ID paquete": "PQT006",
-        "Cantidad de personas": 4,
+        "idTurista": "6",
+        "idPaquete": "PQT006",
+        "cantidadDePersonas": 4,
         "Total": paquetes["PQT006"]["valor"] * 4,
-        "Medios de pago": {
-            "Billeteras virtuales": ["Brubank"],
-            "Tarjetas": ["VISA", "MASTERCARD"],
-            "Otros": []
-        }
+        "formaDePago": "Transferencia"
     },
     "20000089012345": {
         "activo": True,
         "fecha": "2025-05-30 11:00:00.000000",
-        "ID turista": "7",
-        "ID paquete": "PQT007",
-        "Cantidad de personas": 8,
+        "idTurista": "7",
+        "idPaquete": "PQT007",
+        "cantidadDePersonas": 8,
         "Total": paquetes["PQT007"]["valor"] * 8,
-        "Medios de pago": {
-            "Billeteras virtuales": ["Mercadopago"],
-            "Tarjetas": ["CABAL", "AMERICAN EXPRESS"],
-            "Otros": ["Efectivo"]
-        }
+        "formaDePago": "Efectivo"
     },
     "20000090123456": {
         "activo": True,
         "fecha": "2024-10-01 13:20:00.000000",
-        "ID turista": "8",
-        "ID paquete": "PQT010",
-        "Cantidad de personas": 1,
+        "idTurista": "8",
+        "idPaquete": "PQT010",
+        "cantidadDePersonas": 1,
         "Total": paquetes["PQT010"]["valor"],
-        "Medios de pago": {
-            "Billeteras virtuales": [],
-            "Tarjetas": ["MASTERCARD"],
-            "Otros": ["Transferencia"]
-        }
+        "formaDePago": "Efectivo"
     },
     "20000001234567": {
         "activo": True,
         "fecha": "2024-07-22 15:10:00.000000",
-        "ID turista": "9",
-        "ID paquete": "PQT009",
-        "Cantidad de personas": 7,
+        "idTurista": "9",
+        "idPaquete": "PQT009",
+        "cantidadDePersonas": 7,
         "Total": paquetes["PQT009"]["valor"] * 7,
-        "Medios de pago": {
-            "Billeteras virtuales": ["UALA"],
-            "Tarjetas": ["VISA"],
-            "Otros": ["Transferencia", "Efectivo"]
-        }
+        "formaDePago": "Tarjeta"
     }
 }
 
