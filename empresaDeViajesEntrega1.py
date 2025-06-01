@@ -183,25 +183,25 @@ def modificarPaquete(paquetes):
             nuevo = input("Nuevo nombre: ").strip()
             if nuevo != "":
                 paquete["nombre"] = nuevo
-                print("Nombre actualizado.")
+                print("✔ Nombre actualizado.")
 
         elif opcion == "2":
             nuevo = input("Nuevo destino: ").strip()
             if nuevo != "":
                 paquete["destino"] = nuevo
-                print("Destino actualizado.")
+                print("✔ Destino actualizado.")
 
         elif opcion == "3":
             nuevo = input("Nueva duración: ").strip()
             if nuevo != "":
                 paquete["duracion"] = nuevo
-                print("Duración actualizada.")
+                print("✔ Duración actualizada.")
 
         elif opcion == "4":
             nuevo = input("Nuevo valor por persona: ").strip().replace(",", ".")
             if esFloatValido(nuevo):
                 paquete["valor"] = float(nuevo)
-                print("Valor actualizado.")
+                print("✔ Valor actualizado.")
             else:
                 print("Valor inválido. No se modificó.")
 
@@ -209,13 +209,13 @@ def modificarPaquete(paquetes):
             nuevo = input("Nueva descripción: ").strip()
             if nuevo != "":
                 paquete["descripcion"] = nuevo
-                print("Descripción actualizada.")
+                print("✔ Descripción actualizada.")
 
         elif opcion == "6":
             nuevos_servicios = cargarServicios()
             if nuevos_servicios is not None:
                 paquete["servicios"] = nuevos_servicios
-                print("Servicios actualizados.")
+                print("✔ Servicios actualizados.")
             else:
                 print("Los servicios no fueron modificados.")
 
@@ -265,44 +265,27 @@ def eliminarPaquete(paquetes):
 # FUNCIONES PARA VISUALIZAR PAQUETES
 #----------------------------------------------------------------------------------------------
 def listarPaquetesActivos(paquetes):
-    """
-    Muestra todos los paquetes turísticos que estén activos.
-    """
     print("\n--- LISTADO DE PAQUETES ACTIVOS ---\n")
+
     hay_activos = False
 
     for id_paquete, datos in paquetes.items():
         if datos["activo"]:
             hay_activos = True
-            mostrarPaquete(id_paquete, datos)
+            print(f"   ID: {id_paquete}")
+            print(f"   Nombre: {datos['nombre']}")
+            print(f"   Destino: {datos['destino']}")
+            print(f"   Duración: {datos['duracion']}")
+            print(f"   Valor por persona: ${datos['valor']}")
+            print(f"   Descripción: {datos['descripcion']}")
+            print("   Servicios:")
+            for tipo, lista in datos["servicios"].items():
+                for i, item in enumerate(lista, 1):
+                    print(f"     - {tipo.capitalize()} {i}: {item}")
             print("-" * 50)
 
     if not hay_activos:
         print("No hay paquetes activos cargados.")
-
-
-def mostrarPaquete(id_paquete, datos):
-    """
-    Muestra los datos básicos de un paquete turístico.
-    """
-    print("ID:", id_paquete)
-    print("Nombre:", datos["nombre"])
-    print("Destino:", datos["destino"])
-    print("Duración:", datos["duracion"])
-    print("Valor por persona: $", datos["valor"])
-    print("Descripción:", datos["descripcion"])
-    print("Servicios:")
-    mostrarServicios(datos["servicios"])
-
-
-def mostrarServicios(servicios):
-    """
-    Muestra la lista de servicios agrupados por tipo.
-    """
-    for tipo, lista in servicios.items():
-        for i, item in enumerate(lista, 1):
-            print("- ", tipo, i, ":", item)
-
 
 # -------------------------------------
 # Funciones Contrato
@@ -511,13 +494,69 @@ def modficarContrato(_paquetes, _contratos):
     #Verifica ID contrato
     idContratoVerificadoBool, idContratoVerificadoValor= verificaIDcontrato(_idContrato, _contratos)
     
+    #Si el ingreso no es válido, sale de la función. 
     if idContratoVerificadoBool == False:
         print("Contrato no encontrado o desactivado. Intente de nuevo.")
     
     else:
+        contrato = _contratos[idContratoVerificadoValor]
+        print("Opciones a modificar: ")
+        print('''
+[1] Paquete
+[2] Cantidad de personas
+[3] Medios de pago
+            ''')
         
-    
-        return (_idTurista, idContratoVerificadoValor, _fechaDeModificacion)
+        #Input de opción a modificar dentro del contrato
+        opcionAmodificar= str(input("Ingrese opción a modificar: "))
+        
+        #Valida que sea un número de las opciones
+        while opcionAmodificar != "1" and opcionAmodificar != "2" and opcionAmodificar != "3":
+            opcionAmodificar= str(input("Opción ingresada no válida. Ingrese opción a modificar: "))
+            
+        #Opción 1 - Cambio de paquete
+        if opcionAmodificar == "1":
+            nuevoPaquete = str(input("Ingrese el nuevo ID de paquete: ")).strip()
+            
+            #Valida que el paquete exista
+            idPaqueteValidadoBool, idPaqueteValidado= verificaIDpaquete(nuevoPaquete, _paquetes)
+            
+            if idPaqueteValidadoBool == True:
+                contrato["ID paquete"] = nuevoPaquete
+                print("Cambio realizado con éxito.")
+                contrato["fecha"] = _fechaDeModificacion
+                
+            else:
+                print("Paquete no encontrado. Intente de nuevo.")
+                
+        #Opción 2 - Cantidad de personas
+        elif opcionAmodificar == "2":
+            nuevaCantidadDePersonas = int(input("Ingrese la nueva cantidad de personas: "))
+            
+            #Valida el ingreso de cantidad de personas
+            nuevaCantidadDePersonaValidado= validaCantidadAsistentes(nuevaCantidadDePersonas)
+            
+            contrato["Cantidad de personas"] = nuevaCantidadDePersonaValidado
+            contrato["fecha"] = _fechaDeModificacion
+            
+            print("Cambio realizado con éxito.")
+          
+        #Opción 3 - Medios de pago
+        elif opcionAmodificar == "3":
+            print("\nIngrese los nuevos medios de pago separados por comas:")
+            billeteras = input("Billeteras virtuales: ").split(',')
+            tarjetas = input("Tarjetas: ").split(',')
+            otros = input("Otros: ").split(',')
+
+            contrato["Medios de pago"] = {
+                "Billeteras virtuales": [b.strip() for b in billeteras if b.strip()],
+                "Tarjetas": [t.strip() for t in tarjetas if t.strip()],
+                "Otros": [o.strip() for o in otros if o.strip()]
+        }
+            contrato["fecha"] = _fechaDeModificacion
+            print("Cambio realizado con éxito.")
+            
+    return (_idTurista, idContratoVerificadoValor, _fechaDeModificacion)
 
 #----------------------------------------------------------------------------------------------
 # CUERPO PRINCIPAL
@@ -834,7 +873,7 @@ def main():
                     continue
                 print()
                 if sub == "0": break
-                if sub == "1": clientes = altaClientes(clientes)
+                if sub == "1": clientes = altaCliente(clientes)
                 elif sub == "2": ...  # bajaCliente
                 elif sub == "3": ...  # modificarCliente
                 input("\nENTER para continuar.")
