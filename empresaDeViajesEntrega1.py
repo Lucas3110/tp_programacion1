@@ -19,8 +19,7 @@ Menu funcional e informes
 
 # MÓDULOS
 #----------------------------------------------------------------------------------------------
-import datetime 
-import re 
+import datetime  
 
 # FUNCIONES
 #----------------------------------------------------------------------------------------------
@@ -294,21 +293,24 @@ def listarPaquetesActivos(paquetes):
 
 def altaContrato(_paquetes, _contratos):
     """
-    Solicita información al usuario para dar de alta un contrato de viaje.
+    Da de alta un nuevo contrato.
+    Solicita el ID del turista, el ID del paquete (validado contra el diccionario de paquetes), 
+    la cantidad de viajeros (validada), el medio de pago y genera la fecha y hora del contrato.
+    También calcula el monto total a pagar y genera automáticamente un ID único de contrato.
+    El contrato se guarda en el diccionario de contratos con el estado 'activo'.
 
-    Incluyendo el ID del turista, ID del paquete, cantidad de viajeros, medio de pago y la fecha del contrato.
-    Calcula también el total a abonar (actualmente en 0). 
-    
-    Parametos: Recibe los diccionarios de paquetes y contratos. 
-    
+    Parámetros:
+    _paquetes: diccionario de paquetes. 
+    _contratos: diccionario de contratos. 
+
     Returns:
     ID del turista (str)
     ID del paquete (str)
     Cantidad de viajeros (int)
-    Medio de pago (str)
-    Total a pagar (actualmente siempre 0) (int)
-    Fecha y hora de alta del contrato
-    
+    Medio de pago ingresado por el usuario (str)
+    Total por persona (int)
+    Fecha y hora de creación del contrato (datetime)
+    ID del contrato generado (str)
     """
     #Ingreso ID turista
     _idTurista= str(input("Ingrese su ID de turista: ")) #FALTA VALIDACIÓN. 
@@ -364,11 +366,19 @@ def altaContrato(_paquetes, _contratos):
     return _idTurista, _idPaquete, cantidadAsistentesValidado, _medioDePago, _total, _fechaDeContrato, _idContrato
 
 
-def verificaIDpaquete(_idPaquete, _paquetes): ################# HACER DOCSTRING
-    '''Verifica que el número ingresado como ID de paquete sea valido.'''
-    #formatoNombrePaquete = r"^PQT\d{3}$" #Formato del ID de un paquete.
-    #if re.match(formatoNombrePaquete, _idPaquete) and
-    
+def verificaIDpaquete(_idPaquete, _paquetes): 
+    """
+    Verifica si un ID de paquete ingresado es válido, comprobando 
+    si el ID existe dentro del diccionario de paquetes.
+
+    Parámetros:
+    _idPaquete(str): ID del paquete a verificar.
+    _paquetes: diccionario de paquetes. 
+
+    Retorna:
+    bool: True si el ID existe en el diccionario de paquetes, False en caso contrario.
+    str: El ID del paquete ingresado.
+    """
     if _idPaquete in _paquetes:
         return True, _idPaquete
     
@@ -376,8 +386,20 @@ def verificaIDpaquete(_idPaquete, _paquetes): ################# HACER DOCSTRING
         return False, _idPaquete 
  
  
-def validaCantidadAsistentes(ingreso): ################# HACER DOCSTRING
-    ''' Valida que la cantidad de asistentes sea un número positivo mayor a 0 y menor a 100 '''
+def validaCantidadAsistentes(ingreso): 
+    """
+    Valida que la cantidad de asistentes ingresada sea un número válido.
+
+    Verifica que el número de asistentes sea mayor a 0 y menor o igual a 100.
+    Si el valor ingresado no está en ese rango, solicita al usuario que vuelva a ingresar
+    un valor hasta que sea válido.
+
+    Parámetros:
+    ingreso(int): Cantidad inicial de asistentes ingresada por el usuario.
+        
+    Returns:
+    ingreso(int): Cantidad de asistentes validada, un número entero entre 1 y 100.
+    """
     while ingreso < 0 or ingreso > 100:
         ingreso= int(input("No válido. Ingrese la cantidad de asistentes: "))
     
@@ -389,35 +411,54 @@ def verificaIDturista (): ###Falta funciones turista.
     return
 
 
-def verificaIDcontrato(_idContrato, _contratos): #Revisar el else. 
-    '''Verifica que el número ingresado como ID de contrato sea valido. '''
-    if _idContrato in _contratos: #Agregar una validación para que solo tome los contratos activos. 
+def verificaIDcontrato(_idContrato, _contratos): 
+    """
+    Verifica si un ID de contrato es válido y está activo.
+
+    Comprueba si el ID de contrato existe en el diccionario de contratos y si se encuentra activado.
+    Retorna una tupla con el resultado de la verificación y el ID ingresado.
+
+    Parámetros:
+    _idContrato(str): ID del contrato a verificar.
+    _contratos: Diccionario de contratos. 
+        
+
+    Returns:
+    bool: True si el contrato existe y está activo, False en caso contrario.
+    _idContrato(str): El ID del contrato ingresado.
+    """
+    if _idContrato in _contratos and _contratos[_idContrato]["activo"] == True:  
         return True, _idContrato
     
-    elif _idContrato not in _contratos: 
+    elif _idContrato not in _contratos or _contratos[_idContrato]["activo"] == False: 
         return False, _idContrato
-    
-    return
 
 def bajaContrato(_paquetes, _contratos): 
     """
-    De baja un contrato de viaje, utilizando el ID de turista y el ID del paquete.  
-    Ademmás, registra la fecha y hora de la baja. 
+    Da de baja un contrato de viaje existente, utilizando su ID.
+
+    Solicita al usuario el ID del turista y el ID del contrato. Verifica si el contrato
+    existe y se encuentra activo. Si es válido, actualiza su estado a inactivo 
+    (sin eliminarlo del diccionario) y registra la fecha y hora de la baja.
+    
+    Parámetros:
+    _paquetes: Diccionario que contiene los paquetes turísticos (no se usa en esta función, pero se recibe como parámetro).
+    _contratos: Diccionario de contratos (activos e inactivos).
 
     Returns:
-    ID del turista (str)
-    ID del paquete (str)
-    Estado de cancelación (inicialmente 'False') (bool)
-    Fecha y hora de la baja del contrato
+    _idTurista(str): ID del turista.
+    _fechaDeBaja (datetime): Fecha y hora de la baja del contrato.
+    _contratos (diccionario): Diccionario de contratos actualizado.
+
+    None:
+        Si el ID del contrato no es válido o el contrato ya está inactivo.
     """
-    cancelado= False #Eliminar 
     _idTurista= str(input("Ingrese su ID de turista: ")) #Falta validar ID turista.
     _idContrato= str(input("Ingrese el ID del contrato a dar de baja: "))
     
     _verificaNumeroDeContratoBool, _verificaNumeroDeContratoValor= verificaIDcontrato(_idContrato, _contratos)
     
     if _verificaNumeroDeContratoBool == True: 
-        cancelado= True #Eliminar 
         _fechaDeBaja= datetime.datetime.now()
         print("Cancelado con éxito. Fecha de cancelación: ", _fechaDeBaja)
         
@@ -427,7 +468,7 @@ def bajaContrato(_paquetes, _contratos):
         
         print(_contratos) ##Elimar. Solo verifico que se haya eliminado del diccionario de contratos. 
         
-        return _idTurista, cancelado, _fechaDeBaja, _contratos
+        return _idTurista, _fechaDeBaja, _contratos
     
     else:
         print("Contrato no encontrado. Intente nuevamente.")
