@@ -488,14 +488,16 @@ def modficarContrato(_paquetes, _contratos):
     Fecha y hora de la modificación del contrato
     """
     _idTurista= str(input("Ingrese su ID de turista: "))
-    _idContrato= str(input("Ingrese el ID del paquete a modificar: "))
-    _fechaDeModificacion= datetime.datetime.now()
+    _idContrato= str(input("Ingrese el ID del contrato a modificar: "))
+    _fechaDeModificacion= datetime.datetime.now() #Mover esto luego de que se haya hecho el cambio. 
     
     #Verifica ID contrato
     idContratoVerificadoBool, idContratoVerificadoValor= verificaIDcontrato(_idContrato, _contratos)
     
-    #Modifica el contrato 
-    #if idContratoVerificadoBool == True:
+    if idContratoVerificadoBool == False:
+        print("Contrato no encontrado o desactivado. Intente de nuevo.")
+    
+    else:
         
         
     
