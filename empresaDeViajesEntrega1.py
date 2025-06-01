@@ -28,63 +28,34 @@ import datetime
 
 def cargarServicios():
     """
-    Permite seleccionar al menos 2 servicios del paquete turístico y cargar sus detalles.
-    Devuelve un diccionario 'servicios'.
+    Pide al usuario los detalles de los servicios de un paquete turístico.
+    Los servicios son: vuelo, alojamiento, actividad, seguro de viaje y traslado.
+
+    parametros: ninguno
+
+    Return:
+    Diccionario con los detalles cargados para cada servicio.
     """
-    opciones = {
-        "1": "vuelo",
-        "2": "alojamiento",
-        "3": "actividad",
-        "4": "traslado",
-        "5": "seguro de viaje"
-    }
-
     servicios = {}
-
-    print("\nSeleccione al menos 2 servicios para el paquete.")
-    print("Escriba '0' para finalizar la carga.")
-
-    while True:
-        print("\nTipos de servicio:")
-        print("[1] vuelo")
-        print("[2] alojamiento")
-        print("[3] actividad")
-        print("[4] seguro de viaje")
-        print("[5] traslado")
-        print("[0] finalizar")
-
-        #.strip() es un elimina los espacios en blanco que pueden quedar al inicio o al final.
-        seleccion = input("Opción: ").strip()
-
-        if seleccion == "0":
-            break
-
-        if seleccion not in opciones:
-            print("Opción inválida.")
-            continue
-
-        tipo = opciones[seleccion]
-
-        detalle = input(f"Ingrese el detalle del servicio '{tipo}': ").strip()
-
-        if detalle == "":
-            print("El detalle no puede estar vacío.")
-            continue
-
-
-        if tipo not in servicios:
-            servicios[tipo] = []
-
-        servicios[tipo].append(detalle)
-
-
-    if len(servicios) < 2:
-        print("Debe ingresar al menos 2 servicios.")
-        return None
-
+    servicios["vuelo"] = input("Ingrese detalle del vuelo (o deje vacío si no tiene): ").strip()
+    servicios["alojamiento"] = input("Ingrese detalle del alojamiento (o deje vacío si no tiene): ").strip()
+    servicios["actividad"] = input("Ingrese detalle de la actividad (o deje vacío si no tiene): ").strip()
+    servicios["seguro de viaje"] = input("Ingrese detalle del seguro de viaje (o deje vacío si no tiene): ").strip()
+    servicios["traslado"] = input("Ingrese detalle del traslado (o deje vacío si no tiene): ").strip()
     return servicios
 
+
 def esFloatValido(texto):
+    """
+    Verifica si un texto representa un número flotante válido.
+    Reemplaza comas por puntos y valida el formato numérico.
+
+    parametros:
+        texto(str): Texto ingresado por el usuario.
+
+    Return:
+        True si el texto representa un número flotante válido, False en caso contrario.
+    """
     texto = texto.replace(",", ".")
     if texto.count(".") > 1:
         return False
@@ -93,7 +64,14 @@ def esFloatValido(texto):
 
 def altaPaquete(paquetes):
     """
-    Carga un nuevo paquete turístico con campos obligatorios y servicios multivaluados.
+    Carga un nuevo paquete turístico con datos ingresados por el usuario.
+    Incluye nombre, destino, duración, valor, descripción y servicios fijos.
+
+    parametros:
+        paquetes: Diccionario de paquetes turísticos.
+
+    Return:
+        paquetes: Diccionario actualizado con el nuevo paquete agregado.
     """
     print("\n--- INGRESO DE NUEVO PAQUETE ---")
     nombre = str(input("Ingrese un nombre para el paquete: ")).strip()
@@ -110,12 +88,9 @@ def altaPaquete(paquetes):
     descripcion = input("Ingrese una breve descripción del paquete: ").strip()
 
     servicios = cargarServicios()
-    if servicios is None:
-        return paquetes
 
-    nro = len(paquetes) + 1
 
-    id_paquete = f"PQT{nro:03d}"
+    id_paquete = str(len(paquetes) + 1)
 
     paquetes[id_paquete] = {
         "activo": True,
@@ -135,6 +110,17 @@ def altaPaquete(paquetes):
 # FUNCIONES PARA MODIFICAR PAQUETES
 #----------------------------------------------------------------------------------------------
 def modificarPaquete(paquetes):
+    """
+    Permite modificar los datos de un paquete turístico activo.
+    Se puede editar nombre, destino, duración, valor, descripción o servicios.
+
+    Parametros:
+        paquetes: Diccionario de paquetes turísticos.
+
+    Returns:
+        Diccionario actualizado con las modificaciones realizadas.
+    """
+
     print("\n--- MODIFICAR PAQUETE ---")
 
     # Mostrar paquetes activos disponibles
@@ -183,25 +169,25 @@ def modificarPaquete(paquetes):
             nuevo = input("Nuevo nombre: ").strip()
             if nuevo != "":
                 paquete["nombre"] = nuevo
-                print("✔ Nombre actualizado.")
+                print("Nombre actualizado.")
 
         elif opcion == "2":
             nuevo = input("Nuevo destino: ").strip()
             if nuevo != "":
                 paquete["destino"] = nuevo
-                print("✔ Destino actualizado.")
+                print("Destino actualizado.")
 
         elif opcion == "3":
             nuevo = input("Nueva duración: ").strip()
             if nuevo != "":
                 paquete["duracion"] = nuevo
-                print("✔ Duración actualizada.")
+                print("Duración actualizada.")
 
         elif opcion == "4":
             nuevo = input("Nuevo valor por persona: ").strip().replace(",", ".")
             if esFloatValido(nuevo):
                 paquete["valor"] = float(nuevo)
-                print("✔ Valor actualizado.")
+                print("Valor actualizado.")
             else:
                 print("Valor inválido. No se modificó.")
 
@@ -209,13 +195,13 @@ def modificarPaquete(paquetes):
             nuevo = input("Nueva descripción: ").strip()
             if nuevo != "":
                 paquete["descripcion"] = nuevo
-                print("✔ Descripción actualizada.")
+                print("Descripción actualizada.")
 
         elif opcion == "6":
             nuevos_servicios = cargarServicios()
             if nuevos_servicios is not None:
                 paquete["servicios"] = nuevos_servicios
-                print("✔ Servicios actualizados.")
+                print("Servicios actualizados.")
             else:
                 print("Los servicios no fueron modificados.")
 
@@ -228,6 +214,17 @@ def modificarPaquete(paquetes):
 # FUNCIONES PARA ELIMINAR PAQUETES
 #----------------------------------------------------------------------------------------------
 def eliminarPaquete(paquetes):
+    """
+    Realiza la baja lógica de un paquete turístico, marcándolo como inactivo.
+    No elimina el paquete del sistema, solo cambia su estado.
+
+    Parametros:
+        paquetes: Diccionario de paquetes turísticos.
+
+    Returns:
+        Diccionario actualizado con el estado del paquete modificado.
+    """
+
     print("\n--- ELIMINAR PAQUETE ---")
 
     # Mostrar paquetes activos
@@ -265,27 +262,55 @@ def eliminarPaquete(paquetes):
 # FUNCIONES PARA VISUALIZAR PAQUETES
 #----------------------------------------------------------------------------------------------
 def listarPaquetesActivos(paquetes):
-    print("\n--- LISTADO DE PAQUETES ACTIVOS ---\n")
+    """
+    Muestra por pantalla todos los paquetes turísticos que estén activos.
+    
+    Parametros:
+        Diccionario con todos los paquetes cargados.
+    """
 
+    print("\n--- LISTADO DE PAQUETES ACTIVOS ---\n")
     hay_activos = False
 
     for id_paquete, datos in paquetes.items():
         if datos["activo"]:
             hay_activos = True
-            print(f"   ID: {id_paquete}")
-            print(f"   Nombre: {datos['nombre']}")
-            print(f"   Destino: {datos['destino']}")
-            print(f"   Duración: {datos['duracion']}")
-            print(f"   Valor por persona: ${datos['valor']}")
-            print(f"   Descripción: {datos['descripcion']}")
-            print("   Servicios:")
-            for tipo, lista in datos["servicios"].items():
-                for i, item in enumerate(lista, 1):
-                    print(f"     - {tipo.capitalize()} {i}: {item}")
+            mostrarPaquete(id_paquete, datos)
             print("-" * 50)
 
     if not hay_activos:
         print("No hay paquetes activos cargados.")
+
+
+def mostrarPaquete(id_paquete, datos):
+    """
+    Imprime los datos completos de un paquete turístico, incluyendo servicios detallados.
+
+    Parametros:
+        id_paquete: ID del paquete.
+        datos: Diccionario con los datos del paquete.
+    """    
+    print("ID:", id_paquete)
+    print("Nombre:", datos["nombre"])
+    print("Destino:", datos["destino"])
+    print("Duración:", datos["duracion"])
+    print("Valor por persona: $", datos["valor"])
+    print("Descripción:", datos["descripcion"])
+    print("Servicios:")
+    mostrarServicios(datos["servicios"])
+
+
+def mostrarServicios(servicios):
+    """
+    Imprime los servicios de un paquete turístico, uno por uno.
+    
+    Parametros:
+        servicios: Diccionario con detalle de los servicios.
+    """
+    for tipo, lista in servicios.items():
+        for i, item in enumerate(lista, 1):
+            print("- ", tipo, i, ":", item)
+
 
 # -------------------------------------
 # Funciones Contrato
@@ -567,7 +592,7 @@ def main():
     # Inicialización de variables
     clientes = {...}
     paquetes = {
-    "PQT001": {
+    "1": {
         "activo": True,
         "nombre": "Aventura en Salta",
         "destino": "Salta",
@@ -580,7 +605,7 @@ def main():
             "vuelo": ["JetSmart"]
         }
     },
-    "PQT002": {
+    "2": {
         "activo": True,
         "nombre": "Mendoza Full Wine",
         "destino": "Mendoza",
@@ -593,7 +618,7 @@ def main():
             "vuelo": ["Aerolíneas Argentinas"]
         }
     },
-    "PQT003": {
+    "3": {
         "activo": True,
         "nombre": "Relax en Iguazú",
         "destino": "Misiones",
@@ -606,7 +631,7 @@ def main():
             "traslado": ["Aeropuerto - Hotel"]
         }
     },
-    "PQT004": {
+    "4": {
         "activo": True,
         "nombre": "Bariloche Aventura",
         "destino": "Bariloche",
@@ -619,7 +644,7 @@ def main():
             "vuelo": ["Flybondi"]
         }
     },
-    "PQT005": {
+    "5": {
         "activo": True,
         "nombre": "Buenos Aires Clásico",
         "destino": "CABA",
@@ -631,7 +656,7 @@ def main():
             "actividad": ["City Tour", "Cena Tango Show"]
         }
     },
-    "PQT006": {
+    "6": {
         "activo": True,
         "nombre": "Costa Atlántica",
         "destino": "Mar del Plata",
@@ -644,7 +669,7 @@ def main():
             "actividad": ["Acuario y puerto"]
         }
     },
-    "PQT007": {
+    "7": {
         "activo": True,
         "nombre": "Tucumán Colonial",
         "destino": "Tucumán",
@@ -656,7 +681,7 @@ def main():
             "actividad": ["Casa de Tucumán", "Excursión a Tafí del Valle"]
         }
     },
-    "PQT008": {
+    "8": {
         "activo": True,
         "nombre": "Sur Glaciar Express",
         "destino": "El Calafate",
@@ -669,7 +694,7 @@ def main():
             "vuelo": ["Aerolíneas Argentinas"]
         }
     },
-    "PQT009": {
+    "9": {
         "activo": True,
         "nombre": "Córdoba Sierras y Relax",
         "destino": "Córdoba",
@@ -682,7 +707,7 @@ def main():
             "traslado": ["Auto alquilado"]
         }
     },
-    "PQT010": {
+    "10": {
         "activo": True,
         "nombre": "San Juan y Valle de la Luna",
         "destino": "San Juan",
@@ -700,9 +725,9 @@ def main():
         "activo": True,
         "fecha": "2999-12-31 00:00:00.000000", #Fecha de alta de contrato 
         "idTurista": "0", ####### FALTA
-        "idPaquete": "PQT002",
+        "idPaquete": "2",
         "cantidadDePersonas": 1,
-        "Total": paquetes["PQT002"]["valor"] ,  
+        "Total": paquetes["2"]["valor"] ,  
         "formaDePago":"Efectivo"
     },
                   
@@ -710,81 +735,81 @@ def main():
         "activo": True,
         "fecha": "2025-01-12 14:15:00.000000",
         "idTurista": "1",
-        "idPaquete": "PQT001",
+        "idPaquete": "1",
         "cantidadDePersonas": 3,
-        "Total": paquetes["PQT001"]["valor"] * 3,
+        "Total": paquetes["1"]["valor"] * 3,
         "formaDePago":"Transferencia"
     },
     "20000034567890": {
         "activo": True,
         "fecha": "2024-11-20 09:00:00.000000",
         "idTurista": "2",
-        "idPaquete": "PQT002",
+        "idPaquete": "2",
         "cantidadDePersonas": 1,
-        "Total": paquetes["PQT002"]["valor"],
+        "Total": paquetes["2"]["valor"],
         "formaDePago":"Tarjeta"    
     },
     "20000045678901": {
         "activo":True,
         "fecha": "2024-12-01 08:00:00.000000",
         "idTurista": "3",
-        "idPaquete": "PQT003",
+        "idPaquete": "3",
         "cantidadDePersonas": 6,
-        "Total": paquetes["PQT003"]["valor"] * 6,
+        "Total": paquetes["3"]["valor"] * 6,
         "formaDePago":"Transferencia"
     },
     "20000056789012": {
         "activo": True,
         "fecha": "2025-03-10 12:00:00.000000",
         "idTurista": "4",
-        "idPaquete": "PQT004",
+        "idPaquete": "4",
         "cantidadDePersonas": 5,
-        "Total": paquetes["PQT004"]["valor"] * 5,
+        "Total": paquetes["4"]["valor"] * 5,
         "formaDePago":"Efectivo"
     },
     "20000067890123": {
         "activo": True,
         "fecha": "2025-04-05 16:45:00.000000",
         "idTurista": "5",
-        "idPaquete": "PQT005",
+        "idPaquete": "5",
         "cantidadDePersonas": 10,
-        "Total": paquetes["PQT005"]["valor"] * 10,
+        "Total": paquetes["5"]["valor"] * 10,
         "formaDePago": "Tarjeta"
     },
     "20000078901234": {
         "activo": True,
         "fecha": "2023-09-18 09:15:00.000000",
         "idTurista": "6",
-        "idPaquete": "PQT006",
+        "idPaquete": "6",
         "cantidadDePersonas": 4,
-        "Total": paquetes["PQT006"]["valor"] * 4,
+        "Total": paquetes["6"]["valor"] * 4,
         "formaDePago": "Transferencia"
     },
     "20000089012345": {
         "activo": True,
         "fecha": "2025-05-30 11:00:00.000000",
         "idTurista": "7",
-        "idPaquete": "PQT007",
+        "idPaquete": "7",
         "cantidadDePersonas": 8,
-        "Total": paquetes["PQT007"]["valor"] * 8,
+        "Total": paquetes["7"]["valor"] * 8,
         "formaDePago": "Efectivo"
     },
     "20000090123456": {
         "activo": True,
         "fecha": "2024-10-01 13:20:00.000000",
         "idTurista": "8",
-        "idPaquete": "PQT010",
+        "idPaquete": "10",
         "cantidadDePersonas": 1,
-        "Total": paquetes["PQT010"]["valor"],
+        "Total": paquetes["10"]["valor"],
         "formaDePago": "Efectivo"
     },
     "20000001234567": {
         "activo": True,
         "fecha": "2024-07-22 15:10:00.000000",
         "idTurista": "9",
-        "idPaquete": "PQT009",
+        "idPaquete": "9",
         "cantidadDePersonas": 7,
-        "Total": paquetes["PQT009"]["valor"] * 7,
+        "Total": paquetes["9"]["valor"] * 7,
         "formaDePago": "Tarjeta"
     }
 }
