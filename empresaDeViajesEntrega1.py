@@ -129,7 +129,7 @@ def modificarPaquete(paquetes):
         if datos["activo"]:
             print(f"- {idPQT}: {datos['nombre']} | {datos['destino']} ({datos['duracion']}) - ${datos['valor']}")
 
-    id_paquete = input("\nIngrese el ID del paquete a modificar (ej. PQT001): ").strip()
+    id_paquete = input("\nIngrese el ID del paquete a modificar: ").strip()
 
     if id_paquete not in paquetes:
         print("El paquete no existe.")
@@ -307,10 +307,10 @@ def mostrarServicios(servicios):
     Parametros:
         servicios: Diccionario con detalle de los servicios.
     """
-    for tipo, lista in servicios.items():
-        for i, item in enumerate(lista, 1):
-            print("- ", tipo, i, ":", item)
-
+    print("\nServicios:")
+    for tipo, detalle in servicios.items():
+        if detalle:  # Evita mostrar servicios vacíos
+            print(f"- {tipo}: {detalle}")
 
 # -------------------------------------
 # Funciones Contrato
@@ -601,7 +601,7 @@ def main():
         "descripcion": "Excursiones y paisajes del norte argentino",
         "servicios": {
             "alojamiento": ["Hotel Solar del Cerro"],
-            "actividad": ["City tour", "Visita a Cafayate"],
+            "actividad": ["City tour y Visita a Cafayate"],
             "vuelo": ["JetSmart"]
         }
     },
@@ -614,7 +614,7 @@ def main():
         "descripcion": "Degustaciones y hotel boutique en la montaña",
         "servicios": {
             "alojamiento": ["Cavas Wine Lodge"],
-            "actividad": ["Bodega Norton", "Spa vinoterapia"],
+            "actividad": ["Bodega Norton y Spa vinoterapia"],
             "vuelo": ["Aerolíneas Argentinas"]
         }
     },
@@ -627,7 +627,7 @@ def main():
         "descripcion": "Naturaleza, hotel con pileta y parque temático",
         "servicios": {
             "alojamiento": ["Hotel La Cantera Jungle Lodge"],
-            "actividad": ["Cataratas", "Parque de las Aves"],
+            "actividad": ["Cataratas y Parque de las Aves"],
             "traslado": ["Aeropuerto - Hotel"]
         }
     },
@@ -640,7 +640,7 @@ def main():
         "descripcion": "Trekking, kayak y nieve en la Patagonia",
         "servicios": {
             "alojamiento": ["Refugio Piedras Blancas"],
-            "actividad": ["Trekking al cerro", "Rafting en el río"],
+            "actividad": ["Trekking al cerro y Rafting en el río"],
             "vuelo": ["Flybondi"]
         }
     },
@@ -653,7 +653,7 @@ def main():
         "descripcion": "Hotel céntrico y city tour cultural",
         "servicios": {
             "alojamiento": ["Hotel NH Tango"],
-            "actividad": ["City Tour", "Cena Tango Show"]
+            "actividad": ["City Tour y Cena Tango Show"]
         }
     },
     "6": {
@@ -678,7 +678,7 @@ def main():
         "descripcion": "Ruta de la independencia y cerros del NOA",
         "servicios": {
             "alojamiento": ["Hotel Carlos V"],
-            "actividad": ["Casa de Tucumán", "Excursión a Tafí del Valle"]
+            "actividad": ["Casa de Tucumán y Excursión a Tafí del Valle"]
         }
     },
     "8": {
@@ -690,7 +690,7 @@ def main():
         "descripcion": "Perito Moreno y navegación",
         "servicios": {
             "alojamiento": ["Hotel Kosten Aike"],
-            "actividad": ["Glaciar Perito Moreno", "Navegación por Lago Argentino"],
+            "actividad": ["Glaciar Perito Moreno y Navegación por Lago Argentino"],
             "vuelo": ["Aerolíneas Argentinas"]
         }
     },
@@ -703,7 +703,7 @@ def main():
         "descripcion": "Villa General Belgrano, caminatas y spa",
         "servicios": {
             "alojamiento": ["Cabañas Alpinas"],
-            "actividad": ["Spa y senderismo", "Villa General Belgrano"],
+            "actividad": ["Spa y senderismo y Villa General Belgrano"],
             "traslado": ["Auto alquilado"]
         }
     },
@@ -716,7 +716,7 @@ def main():
         "descripcion": "Naturaleza, fósiles y aventura paleontológica",
         "servicios": {
             "alojamiento": ["Hostería del Sol"],
-            "actividad": ["Valle de la Luna", "Museo de Dinosaurios"],
+            "actividad": ["Valle de la Luna y Museo de Dinosaurios"],
             "traslado": ["Minivan desde aeropuerto"]
         }
     }
@@ -865,39 +865,46 @@ def main():
                 elif sub == "3": ...  # modificarCliente
                 input("\nENTER para continuar.")
 
-        # Gestión de paquetes
+# GESTIÓN DE PAQUETES
         elif opcion == "2":
             while True:
+            
+                opciones = 4
                 print()
                 print("---------------------------")
-                print("MENÚ DE PAQUETES")
+                print("MENÚ DEL PROGRAMA           ")
                 print("---------------------------")
-                print("[1] Alta paquete")
-                print("[2] Baja paquete")
-                print("[3] Modificar paquete")
+                print("[1] Ingresar paquete")
+                print("[2] Modificar paquete")
+                print("[3] Eliminar paquete")
+                print("[4] Listar paquetes activos")
                 print("---------------------------")
-                print("[0] Volver al menú principal")
+                print("[0] Volver al menú anterior")
                 print("---------------------------")
                 print()
-
-                sub = input("Seleccione una opción: ")
-                if sub not in [str(i) for i in range(0,4)]:
-                    input("Opción inválida. Presione ENTER para volver.")
-                    continue
-                print()
-                if sub == "0":
+                
+                opcion = input("Seleccione una opción: ")
+                if opcion in [str(i) for i in range(0, opciones + 1)]: # Sólo continua si se elije una opcion de menú válida
                     break
-               
-                if sub == "1": # altaPaquete
-                    paquetes = altaPaquete(paquetes) 
-                    
-                elif sub == "2":  # bajaPaquete
-                    paquetes = eliminarPaquete(paquetes)
-                    
-                elif sub == "3":  # modificarPaquete
-                    paquetes = modificarPaquete(paquetes)
-                    
-                input("\nENTER para continuar.")
+                else:
+                    input("Opción inválida. Presione ENTER para volver a seleccionar.")
+            print()
+
+            if opcion == "0": # Opción salir del programa
+                exit() # También puede ser sys.exit() para lo cual hay que importar el módulo sys
+
+            elif opcion == "1":   # Opción 1
+                paquetes = altaPaquete(paquetes)
+
+            elif opcion == "2":   # Opción 2
+                paquetes = modificarPaquete(paquetes)
+
+            elif opcion == "3":   # Opción 3
+                paquetes = eliminarPaquete(paquetes)
+
+            elif opcion == "4":   # Opción 4
+                listarPaquetesActivos(paquetes)
+
 
         # Gestión de contratos
         elif opcion == "3":
