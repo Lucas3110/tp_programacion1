@@ -198,18 +198,34 @@ def modificarPaquete(paquetes):
                 print("Descripción actualizada.")
 
         elif opcion == "6":
-            nuevos_servicios = cargarServicios()
-            if nuevos_servicios is not None:
-                paquete["servicios"] = nuevos_servicios
-                print("Servicios actualizados.")
-            else:
-                print("Los servicios no fueron modificados.")
+            nuevos_servicios = cargarServiciosParaModificar(paquete["servicios"])
+            paquete["servicios"] = nuevos_servicios
+            print("Servicios actualizados.")
 
         else:
             print("Opción inválida. Intente de nuevo.")
 
     print(f"\nPaquete '{id_paquete}' modificado con éxito.")
     return paquetes
+
+def cargarServiciosParaModificar(servicios_anteriores):
+    """
+    Pide al usuario los detalles de los servicios de un paquete turístico.
+    Si se deja un campo vacío, conserva el valor anterior.
+
+    Parámetros:
+        servicios_anteriores: Servicios ya existentes del paquete.
+
+    Return:
+        Diccionario actualizado con los nuevos valores o los anteriores si no se modificaron.
+    """
+    servicios = {}
+
+    for tipo, anterior in servicios_anteriores.items():
+        entrada = input(f"Ingrese detalle del {tipo} (actual: '{anterior}') (Enter para mantener): ").strip()
+        servicios[tipo] = entrada if entrada else anterior
+
+    return servicios
 
 # FUNCIONES PARA ELIMINAR PAQUETES
 #----------------------------------------------------------------------------------------------
