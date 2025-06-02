@@ -239,7 +239,7 @@ def eliminarPaquete(paquetes):
         print("No hay paquetes activos para eliminar.")
         return paquetes
 
-    id_paquete = input("\nIngrese el ID del paquete que desea eliminar (ej. PQT001): ").strip()
+    id_paquete = input("\nIngrese el ID del paquete que desea eliminar: ").strip()
 
     if id_paquete not in paquetes:
         print("Ese paquete no existe.")
