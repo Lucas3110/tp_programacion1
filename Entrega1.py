@@ -87,18 +87,18 @@ def generar_id(turistas):
     
     return turistas
 
-def modificarTurista(turistas): #Da error
-     """Con esta funcion, modificamos la informacion del turista, primero preguntando que dato desea modificar y luego con el menu, para que pueda seleccionar y modificar"""
-     print("\n--- MODIFICAR INFORMACION DE TURISTA ---")
-     idTurista=input("Ingresar ID de turista que desea modificar: ")
+def modificarTurista(turistas):
+    """Con esta funcion, modificamos la informacion del turista, primero preguntando que dato desea modificar y luego con el menu, para que pueda seleccionar y modificar"""
+    print("\n--- MODIFICAR INFORMACION DE TURISTA ---")
+    idTurista=input("Ingresar ID de turista que desea modificar: ")
 
-     if idTurista not in turistas:
-         print("Id incorrecto, ingrese ID")    ###En caso de que el ID ingresado no sea correcto, volvemos a preguntar###
-         return turistas
-     
-     turista = turistas [idTurista]
+    if idTurista not in turistas:
+        print("Id incorrecto, ingrese ID")    ###En caso de que el ID ingresado no sea correcto, volvemos a preguntar###
+        return turistas
+    
+    turista = turistas [idTurista]
 
-     while True:
+    while True:
 
         print("\n¿Qué desea modificar del turista?")
         print("[1] Nombre")
@@ -109,33 +109,40 @@ def modificarTurista(turistas): #Da error
         opcion = input("Opcion: ")
 
         if opcion == "0":
-            print(f"\nTurista '{idTurista}' modificado con éxito.")
-            break
+            break # Salir del bucle para luego imprimir el mensaje final y retornar
 
         elif opcion == "1":
             nuevo = input("Nuevo nombre: ").strip()
             if nuevo != "":
                 turista["nombre"] = nuevo
                 print("✔ Nombre actualizado.")
+            else:
+                print("No se ingresó un nuevo nombre. No se realizaron cambios.")
 
         elif opcion == "2":
             nuevo = input("Nuevo apellido: ").strip()
             if nuevo != "":
                 turista["apellido"] = nuevo
-                print("✔ apellido actualizado.")
+                print("✔ Apellido actualizado.")
+            else:
+                print("No se ingresó un nuevo apellido. No se realizaron cambios.")
 
         elif opcion == "3":
             nuevo = input("Nuevo email: ").strip()
             if nuevo != "":
                 turista["email"] = nuevo
-                print("✔ email actualizada.")
+                print("✔ Email actualizado.")
+            else:
+                print("No se ingresó un nuevo email. No se realizaron cambios.")
+        
+        else:
+            print("Opción inválida. Intente de nuevo.")
 
-        print(f"\nTurista '{idTurista}' modificado con éxito.")
-        return turistas 
+    print(f"\nTurista '{idTurista}' modificado con éxito.") # Mensaje único al final
+    return turistas 
 
 
-def listarTuristasActivos(turistas): #Da error luego de eliminar un turista
-    
+def listarTuristasActivos(turistas):
     """Creamos una lista de turistas activos"""
 
     print("\nListado de turistas activos:")
@@ -146,17 +153,35 @@ def listarTuristasActivos(turistas): #Da error luego de eliminar un turista
             tels = ", ".join(t["telefonos"].values())
             print(f'{t["idTurista"]:<4} {t["nombre"]:<14} {t["apellido"]:<14} {t["dni"]:<12} {t["email"]:<22} {tels}')
     print("-"*80)
+    return turistas
 
 def eliminarTuristas(turistas):
-    """permite eliminar el turista deseado en base al ID."""
-    turistaEliminado = input("Ingrese ID de turista que desea eliminar: ")
+    """Realiza la baja lógica de un turista, marcándolo como inactivo."""
+    print("\n--- ELIMINAR TURISTA ---")
+    id_turista_eliminar = input("Ingrese el ID del turista que desea eliminar: ").strip()
+
+    if id_turista_eliminar not in turistas:
+        print("Error: El ID del turista no existe.")
+        return turistas
+
+    if not turistas[id_turista_eliminar]["activo"]:
+        print("Error: El turista ya se encuentra inactivo.")
+        return turistas
+
+    turista_a_eliminar = turistas[id_turista_eliminar]
+    print(f"\nDatos del turista a eliminar:")
+    print(f"  ID: {turista_a_eliminar['idTurista']}")
+    print(f"  Nombre: {turista_a_eliminar['nombre']} {turista_a_eliminar['apellido']}")
+    print(f"  DNI: {turista_a_eliminar['dni']}")
     
-    if turistaEliminado in turistas:
-        turistas = {t for t in turistas if t != turistaEliminado}
-        print(f"Todos los turistas con ID {turistaEliminado} han sido eliminados.")
+    confirmacion = input(f"¿Está seguro que desea eliminar (desactivar) al turista '{turista_a_eliminar['nombre']} {turista_a_eliminar['apellido']}' (ID: {id_turista_eliminar})? (s/n): ").strip().lower()
+    
+    if confirmacion == "s":
+        turistas[id_turista_eliminar]["activo"] = False
+        print(f"Turista '{id_turista_eliminar}' desactivado correctamente.")
     else:
-        print("El ID ingresado no existe en la lista.")
-    
+        print("Eliminación cancelada.")
+        
     return turistas
 
 #----------------------------------------------------------------------------------------------
@@ -247,7 +272,7 @@ def altaPaquete(paquetes):
 
 # FUNCIONES PARA MODIFICAR PAQUETES
 #----------------------------------------------------------------------------------------------
-def modificarPaquete(paquetes): #Imprime dos veces 'modificado' luego de una modificación
+def modificarPaquete(paquetes):
     """
     Permite modificar los datos de un paquete turístico activo.
     Se puede editar nombre, destino, duración, valor, descripción o servicios.
@@ -300,7 +325,6 @@ def modificarPaquete(paquetes): #Imprime dos veces 'modificado' luego de una mod
         opcion = input("Opción: ").strip()
 
         if opcion == "0":
-            print(f"\nPaquete '{id_paquete}' modificado con éxito.")
             break
 
         elif opcion == "1":
