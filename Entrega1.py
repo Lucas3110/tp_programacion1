@@ -1491,7 +1491,7 @@ def main():
         print("---------------------------")
         print("MENÚ PRINCIPAL")
         print("---------------------------")
-        print("[1] Gestión de clientes")
+        print("[1] Gestión de turistas")
         print("[2] Gestión de paquetes")
         print("[3] Gestión de contratos")
         print("[4] Reportes")
