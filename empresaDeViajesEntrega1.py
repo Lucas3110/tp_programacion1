@@ -616,9 +616,9 @@ def main():
         "valor": 210000.0,
         "descripcion": "Excursiones y paisajes del norte argentino",
         "servicios": {
-            "alojamiento": ["Hotel Solar del Cerro"],
-            "actividad": ["City tour y Visita a Cafayate"],
-            "vuelo": ["JetSmart"]
+            "alojamiento": "Hotel Solar del Cerro",
+            "actividad": "City tour y Visita a Cafayate",
+            "vuelo": "JetSmart"
         }
     },
     "2": {
@@ -629,9 +629,9 @@ def main():
         "valor": 265000.0,
         "descripcion": "Degustaciones y hotel boutique en la montaña",
         "servicios": {
-            "alojamiento": ["Cavas Wine Lodge"],
-            "actividad": ["Bodega Norton y Spa vinoterapia"],
-            "vuelo": ["Aerolíneas Argentinas"]
+            "alojamiento": "Cavas Wine Lodge",
+            "actividad": "Bodega Norton y Spa vinoterapia",
+            "vuelo": "Aerolíneas Argentinas"
         }
     },
     "3": {
@@ -642,9 +642,9 @@ def main():
         "valor": 295000.0,
         "descripcion": "Naturaleza, hotel con pileta y parque temático",
         "servicios": {
-            "alojamiento": ["Hotel La Cantera Jungle Lodge"],
-            "actividad": ["Cataratas y Parque de las Aves"],
-            "traslado": ["Aeropuerto - Hotel"]
+            "alojamiento": "Hotel La Cantera Jungle Lodge",
+            "actividad": "Cataratas y Parque de las Aves",
+            "traslado": "Aeropuerto - Hotel"
         }
     },
     "4": {
@@ -655,9 +655,9 @@ def main():
         "valor": 310000.0,
         "descripcion": "Trekking, kayak y nieve en la Patagonia",
         "servicios": {
-            "alojamiento": ["Refugio Piedras Blancas"],
-            "actividad": ["Trekking al cerro y Rafting en el río"],
-            "vuelo": ["Flybondi"]
+            "alojamiento": "Refugio Piedras Blancas",
+            "actividad": "Trekking al cerro y Rafting en el río",
+            "vuelo": "Flybondi"
         }
     },
     "5": {
@@ -668,8 +668,8 @@ def main():
         "valor": 180000.0,
         "descripcion": "Hotel céntrico y city tour cultural",
         "servicios": {
-            "alojamiento": ["Hotel NH Tango"],
-            "actividad": ["City Tour y Cena Tango Show"]
+            "alojamiento": "Hotel NH Tango",
+            "actividad": "City Tour y Cena Tango Show"
         }
     },
     "6": {
@@ -680,9 +680,9 @@ def main():
         "valor": 155000.0,
         "descripcion": "Playa, paseo costero y hotel con desayuno",
         "servicios": {
-            "alojamiento": ["Hotel Dos Reyes"],
-            "traslado": ["Bus desde Buenos Aires"],
-            "actividad": ["Acuario y puerto"]
+            "alojamiento": "Hotel Dos Reyes",
+            "traslado": "Bus desde Buenos Aires",
+            "actividad": "Acuario y puerto"
         }
     },
     "7": {
@@ -693,8 +693,8 @@ def main():
         "valor": 198000.0,
         "descripcion": "Ruta de la independencia y cerros del NOA",
         "servicios": {
-            "alojamiento": ["Hotel Carlos V"],
-            "actividad": ["Casa de Tucumán y Excursión a Tafí del Valle"]
+            "alojamiento": "Hotel Carlos V",
+            "actividad": "Casa de Tucumán y Excursión a Tafí del Valle"
         }
     },
     "8": {
@@ -705,9 +705,9 @@ def main():
         "valor": 320000.0,
         "descripcion": "Perito Moreno y navegación",
         "servicios": {
-            "alojamiento": ["Hotel Kosten Aike"],
-            "actividad": ["Glaciar Perito Moreno y Navegación por Lago Argentino"],
-            "vuelo": ["Aerolíneas Argentinas"]
+            "alojamiento": "Hotel Kosten Aike",
+            "actividad": "Glaciar Perito Moreno y Navegación por Lago Argentino",
+            "vuelo": "Aerolíneas Argentinas"
         }
     },
     "9": {
@@ -718,9 +718,9 @@ def main():
         "valor": 230000.0,
         "descripcion": "Villa General Belgrano, caminatas y spa",
         "servicios": {
-            "alojamiento": ["Cabañas Alpinas"],
-            "actividad": ["Spa y senderismo y Villa General Belgrano"],
-            "traslado": ["Auto alquilado"]
+            "alojamiento": "Cabañas Alpinas",
+            "actividad": "Spa y senderismo y Villa General Belgrano",
+            "traslado": "Auto alquilado"
         }
     },
     "10": {
@@ -731,9 +731,9 @@ def main():
         "valor": 245000.0,
         "descripcion": "Naturaleza, fósiles y aventura paleontológica",
         "servicios": {
-            "alojamiento": ["Hostería del Sol"],
-            "actividad": ["Valle de la Luna y Museo de Dinosaurios"],
-            "traslado": ["Minivan desde aeropuerto"]
+            "alojamiento": "Hostería del Sol",
+            "actividad": "Valle de la Luna y Museo de Dinosaurios",
+            "traslado": "Minivan desde aeropuerto"
         }
     }
 } ### Diccionarios de contratos 
