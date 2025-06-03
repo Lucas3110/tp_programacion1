@@ -72,7 +72,7 @@ def ingresarTurista(turistas):
         "telefonos": telefonos_del_nuevo_turista # Usar el diccionario poblado
     }
     print("\nTurista agregado con ID:", nuevo_id)
-    return turistas # Asegurarse de retornar el diccionario de turistas actualizado
+    return turistas 
 
 def generar_id(turistas):
     """mediante esta funcion, creamos un nuevo id para el nuevo turista"""
