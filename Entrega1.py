@@ -2,7 +2,7 @@
 -----------------------------------------------------------------------------------------------
 Título: Empresa de viajes
 Fecha: 25/05/25
-Autor: Maia Medina, Eugenia Alonso, Lucas Rodriguez, Ciro Petrella y Caterina Turdo
+Autor: Maia Medina, Eugenia Alonso, Lucas Rodriguez, Juan Ciro Petrella y Caterina Turdo
 Descripción: Sistema para gestion de paquetes de viajes
 
 Pendientes:
@@ -22,53 +22,44 @@ import datetime
 # FUNCIONES TURISTAS
 #----------------------------------------------------------------------------------------------
 def ingresarTurista(turistas):
-
     ##Funcion que permite ingresar los datos de un nuevo turista##
-
     print("\n--- INGRESO DE NUEVO TURISTA ---")
-    nuevo_id=generar_id(turistas)
-    nombre=input("Ingrese nombre del turista: ")
-    apellido=input("Ingrese apellido: ")
-    dni=input("Ingrese DNI: ")
-    email=input("Ingrese email: ")
-    telefonos = {"telefono1": "", "telefono2": "", "telefono3": "",}  # Definir el diccionario dentro de la función
-
+    nuevo_id = generar_id(turistas) # Asumo que generar_id funciona bien
+    nombre = input("Ingrese nombre del turista: ").strip()
+    apellido = input("Ingrese apellido: ").strip()
+    dni = input("Ingrese DNI: ").strip()
+    email = input("Ingrese email: ").strip()
     
-    def ingresarTelefonos():
-        valTel1 = input("Tiene un primer teléfono de contacto? Ingrese S/N: ").strip().upper()
-        if valTel1 == "S":
-            telefono1 = input("Ingrese su primer teléfono de contacto: ")
-        
-        # Validamos que el usuario solo ingrese números
-            if telefono1.isdigit():
-                telefonos["telefono1"] = telefono1
-            else:
-                print("Error: Ingrese solo números.")
-        valTel2 = input("Tiene un segundo telefono de contacto? Ingrese S/N: ").strip().upper()
-        if valTel2 == "S":
-            telefono2 = input("Ingrese su segundo teléfono de contacto: ")
-        
-        # Validamos que el usuario solo ingrese números
-            if telefono2.isdigit():
-                telefonos["telefono2"] = telefono2
-            else:
-                print("Error: Ingrese solo números.")
+    # Diccionario para almacenar los teléfonos del nuevo turista
+    telefonos_del_nuevo_turista = {"telefono1": "", "telefono2": "", "telefono3": ""}
 
-        valTel3 = input("Tiene un tercer teléfono de contacto? Ingrese S/N: ").strip().upper()
-        if valTel3 == "S":
-            telefono3 = input("Ingrese su tercer teléfono de contacto: ")
-        
-        # Validamos que el usuario solo ingrese números
-            if telefono3.isdigit():
-                telefonos["telefono3"] = telefono3
-            else:
-                print("Error: Ingrese solo números.")
-
+    print("\n--- Ingreso de Teléfonos ---")
+    # Teléfono 1
+    valTel1 = input("Tiene un primer teléfono de contacto? Ingrese S/N: ").strip().upper()
+    if valTel1 == "S":
+        telefono1_input = input("Ingrese su primer teléfono de contacto: ").strip()
+        if telefono1_input.isdigit():
+            telefonos_del_nuevo_turista["telefono1"] = telefono1_input
+        else:
+            print("Error: El teléfono 1 debe contener solo números. No se guardó.")
     
-    telefonos = ingresarTelefonos()  
-    return telefonos 
+    # Teléfono 2
+    valTel2 = input("Tiene un segundo telefono de contacto? Ingrese S/N: ").strip().upper()
+    if valTel2 == "S":
+        telefono2_input = input("Ingrese su segundo teléfono de contacto: ").strip()
+        if telefono2_input.isdigit():
+            telefonos_del_nuevo_turista["telefono2"] = telefono2_input
+        else:
+            print("Error: El teléfono 2 debe contener solo números. No se guardó.")
 
-     
+    # Teléfono 3
+    valTel3 = input("Tiene un tercer teléfono de contacto? Ingrese S/N: ").strip().upper()
+    if valTel3 == "S":
+        telefono3_input = input("Ingrese su tercer teléfono de contacto: ").strip()
+        if telefono3_input.isdigit():
+            telefonos_del_nuevo_turista["telefono3"] = telefono3_input
+        else:
+            print("Error: El teléfono 3 debe contener solo números. No se guardó.")
 
     ### Guardamos la informacion del nuevo turista###
     turistas[nuevo_id] = {
@@ -78,19 +69,10 @@ def ingresarTurista(turistas):
         "apellido": apellido,
         "dni": dni,
         "email": email,
-        "telefonos": {
-            "telefono1": telefono1,
-            "telefono2": telefono2,
-            "telefono3": telefono3,
-        }
+        "telefonos": telefonos_del_nuevo_turista # Usar el diccionario poblado
     }
-    print("Turista agregado con ID:", nuevo_id)
-    return turistas
-
-
-  
-    
-
+    print("\nTurista agregado con ID:", nuevo_id)
+    return turistas # Asegurarse de retornar el diccionario de turistas actualizado
 
 def generar_id(turistas):
     """mediante esta funcion, creamos un nuevo id para el nuevo turista"""
@@ -817,64 +799,62 @@ def reporteResumenMontosPorMes(contratos, paquetes):
 
     for id_contrato, contrato_info in contratos.items(): 
         if contrato_info.get("activo", False):
-
             fecha_contrato_str = contrato_info["fecha"]
             fecha_contrato_obj = datetime.datetime.strptime(fecha_contrato_str, "%Y.%m.%d %H:%M:%S")
 
-            anio = fecha_contrato_obj.year
-            mes = fecha_contrato_obj.month
+            año_contrato = fecha_contrato_obj.year
+            mes_contrato = fecha_contrato_obj.month
             id_paquete = contrato_info["idPaquete"]
             monto = float(contrato_info["Total"]) 
 
-            datos_agrupados.setdefault(anio, {}).setdefault(id_paquete, {})
-            datos_agrupados[anio][id_paquete].setdefault(mes, 0.0)
-            datos_agrupados[anio][id_paquete][mes] += monto
+            datos_agrupados.setdefault(año_contrato, {}).setdefault(id_paquete, {})
+            datos_agrupados[año_contrato][id_paquete].setdefault(mes_contrato, 0.0)
+            datos_agrupados[año_contrato][id_paquete][mes_contrato] += monto
 
     if not datos_agrupados:
         print("No hay datos de contratos activos para generar el informe.")
         return
 
     hoy = datetime.datetime.now()
-    anio_actual_num = hoy.year
+    año_actual_num = hoy.year
     mes_actual_num = hoy.month
 
-    anio_inicio_rango = anio_actual_num
+    año_inicio_rango = año_actual_num
     mes_inicio_rango = mes_actual_num - 11 
     if mes_inicio_rango <= 0:
         mes_inicio_rango += 12
-        anio_inicio_rango -= 1
+        año_inicio_rango -= 1
 
-    nombres_meses_short = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"]
-    col_width_producto = 25
-    col_width_mes = 11 
+    nombres_meses_abreviados = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"]
+    ancho_col_producto = 25
+    ancho_col_mes = 11 
 
-    anios_con_datos_en_diccionario = set(datos_agrupados.keys())
-    anios_del_informe_potenciales = set()
-    anios_del_informe_potenciales.add(anio_inicio_rango)
-    anios_del_informe_potenciales.add(anio_actual_num)
+    años_con_datos_en_diccionario = set(datos_agrupados.keys())
+    años_del_informe_potenciales = set()
+    años_del_informe_potenciales.add(año_inicio_rango)
+    años_del_informe_potenciales.add(año_actual_num)
     
-    sorted_anios_a_mostrar = sorted(list(anios_con_datos_en_diccionario.intersection(anios_del_informe_potenciales)))
+    sorted_años_a_mostrar = sorted(list(años_con_datos_en_diccionario.intersection(años_del_informe_potenciales)))
 
-    if not sorted_anios_a_mostrar:
-        print(f"No hay datos de contratos en los últimos 12 meses (desde {nombres_meses_short[mes_inicio_rango-1]}.{str(anio_inicio_rango)[-2:]} hasta {nombres_meses_short[mes_actual_num-1]}.{str(anio_actual_num)[-2:]}) que coincidan con los años procesados.")
+    if not sorted_años_a_mostrar:
+        print(f"No hay datos de contratos en los últimos 12 meses (desde {nombres_meses_abreviados[mes_inicio_rango-1]}.{str(año_inicio_rango)[-2:]} hasta {nombres_meses_abreviados[mes_actual_num-1]}.{str(año_actual_num)[-2:]}) que coincidan con los años procesados.")
         return
 
     hubo_datos_en_rango_visible = False
 
-    for anio in sorted_anios_a_mostrar:
-        line_length = col_width_producto + 1 + (col_width_mes * 12)
-
+    for año_actual_informe in sorted_años_a_mostrar:
+        longitud_linea = ancho_col_producto + 1 + (ancho_col_mes * 12)
         print() 
-        print("-" * line_length)  # Separador superior
-        print("PESOS TOTALES POR MES") # Título alineado a la izquierda
-        print("-" * line_length)  # Separador después del título
+        print("-" * longitud_linea)
+        print("PESOS TOTALES POR MES")
+        print("-" * longitud_linea)
 
-        header_line = f"{'Producto':<{col_width_producto}} "
+        linea_encabezado = f"{'Producto':<{ancho_col_producto}} "
         for i in range(12):
-            mes_anio_str = f"{nombres_meses_short[i]}.{str(anio)[-2:]}"
-            header_line += f"{mes_anio_str:^{col_width_mes}}"
-        print(header_line)
-        print("-" * line_length)
+            mes_año_str = f"{nombres_meses_abreviados[i]}.{str(año_actual_informe)[-2:]}"
+            linea_encabezado += f"{mes_año_str:^{ancho_col_mes}}"
+        print(linea_encabezado)
+        print("-" * longitud_linea)
 
         paquetes_activos_ordenados = sorted(
             [(id_pqt, info) for id_pqt, info in paquetes.items() if info.get("activo", False)],
@@ -884,27 +864,27 @@ def reporteResumenMontosPorMes(contratos, paquetes):
         for id_pqt, info_paquete in paquetes_activos_ordenados:
             nombre_paquete_display = info_paquete.get("nombre", f"Paquete ID {id_pqt}")
             
-            if len(nombre_paquete_display) > col_width_producto -3: # Ajuste para que "..." quepa
-                 nombre_paquete_trunc = nombre_paquete_display[:col_width_producto-4] + "..."
+            if len(nombre_paquete_display) > ancho_col_producto -3: 
+                 nombre_paquete_truncado = nombre_paquete_display[:ancho_col_producto-4] + "..."
             else:
-                 nombre_paquete_trunc = nombre_paquete_display
+                 nombre_paquete_truncado = nombre_paquete_display
             
-            linea_paquete = f"{nombre_paquete_trunc:<{col_width_producto}} "
-            montos_paquete_este_anio = datos_agrupados.get(anio, {}).get(id_pqt, {})
+            linea_paquete = f"{nombre_paquete_truncado:<{ancho_col_producto}} "
+            montos_paquete_este_año = datos_agrupados.get(año_actual_informe, {}).get(id_pqt, {})
 
             for mes_num in range(1, 13):
-                monto_del_mes_original = montos_paquete_este_anio.get(mes_num, 0.0)
+                monto_del_mes_original = montos_paquete_este_año.get(mes_num, 0.0)
                 monto_a_mostrar = 0.0
 
                 es_mes_valido_en_rango = False
-                if anio == anio_inicio_rango:
-                    if anio == anio_actual_num: 
+                if año_actual_informe == año_inicio_rango:
+                    if año_actual_informe == año_actual_num: 
                         if mes_num >= mes_inicio_rango and mes_num <= mes_actual_num:
                             es_mes_valido_en_rango = True
                     else: 
                         if mes_num >= mes_inicio_rango:
                             es_mes_valido_en_rango = True
-                elif anio == anio_actual_num: 
+                elif año_actual_informe == año_actual_num: 
                     if mes_num <= mes_actual_num:
                         es_mes_valido_en_rango = True
                 
@@ -912,12 +892,12 @@ def reporteResumenMontosPorMes(contratos, paquetes):
                     monto_a_mostrar = monto_del_mes_original
                     if monto_a_mostrar > 0: hubo_datos_en_rango_visible = True
                 
-                linea_paquete += f"{monto_a_mostrar:>{col_width_mes-1}.2f} " 
+                linea_paquete += f"{monto_a_mostrar:>{ancho_col_mes-1}.2f} " 
             print(linea_paquete)
-        print("-" * line_length)
+        print("-" * longitud_linea)
     
-    if not hubo_datos_en_rango_visible and sorted_anios_a_mostrar:
-        print(f"No se encontraron operaciones con montos en los últimos 12 meses (desde {nombres_meses_short[mes_inicio_rango-1]}.{str(anio_inicio_rango)[-2:]} hasta {nombres_meses_short[mes_actual_num-1]}.{str(anio_actual_num)[-2:]}).")
+    if not hubo_datos_en_rango_visible and sorted_años_a_mostrar:
+        print(f"No se encontraron operaciones con montos en los últimos 12 meses (desde {nombres_meses_abreviados[mes_inicio_rango-1]}.{str(año_inicio_rango)[-2:]} hasta {nombres_meses_abreviados[mes_actual_num-1]}.{str(año_actual_num)[-2:]}).")
     print("\n--- FIN DEL INFORME ---")
 
 
@@ -948,14 +928,13 @@ def informePaquetesPorVentas(contratos, paquetes):
                 ventas_por_paquete[id_paquete_contratado]["ventas"] += 1
     
     lista_paquetes_ventas = []
-    for id_pqt, data in ventas_por_paquete.items():
+    for id_pqt, datos_paquete in ventas_por_paquete.items():
         lista_paquetes_ventas.append({
             "id": id_pqt,
-            "nombre": data["nombre"],
-            "ventas": data["ventas"]
+            "nombre": datos_paquete["nombre"],
+            "ventas": datos_paquete["ventas"]
         })
     
-    # Ordenar: primero por cantidad de ventas (ascendente), luego por nombre (ascendente)
     lista_paquetes_ventas_ordenada = sorted(
         lista_paquetes_ventas, 
         key=lambda x: (x["ventas"], x["nombre"])
@@ -965,30 +944,29 @@ def informePaquetesPorVentas(contratos, paquetes):
         print("No se encontraron datos de ventas para los paquetes activos.")
         return
 
-    # Ajustar el ancho de las columnas y la línea separadora
-    col_rank_width = 5
-    col_nombre_width = 35 # Aumentar un poco para el nombre
-    col_ventas_width = 10
-    line_total_width = col_rank_width + col_nombre_width + col_ventas_width + 3 # +3 por los espacios entre columnas
+    ancho_col_posicion = 5
+    ancho_col_nombre = 35 
+    ancho_col_ventas = 10
+    longitud_total_linea = ancho_col_posicion + ancho_col_nombre + ancho_col_ventas + 3 
 
     print("\n{:<{rw}} {:<{nw}} {:<{vw}}".format(
-        "Rank", "Nombre del Paquete", "Ventas",
-        rw=col_rank_width, nw=col_nombre_width, vw=col_ventas_width)
+        "Posición", "Nombre del Paquete", "Ventas",
+        rw=ancho_col_posicion, nw=ancho_col_nombre, vw=ancho_col_ventas)
     )
-    print("-" * line_total_width)
-    for i, paquete_data in enumerate(lista_paquetes_ventas_ordenada):
-        rank = i + 1
-        nombre_display = paquete_data["nombre"]
-        if len(nombre_display) > col_nombre_width - 2: # -2 para ".."
-            nombre_display = nombre_display[:col_nombre_width - 3] + "..."
+    print("-" * longitud_total_linea)
+    for i, datos_paquete_iter in enumerate(lista_paquetes_ventas_ordenada):
+        posicion = i + 1
+        nombre_a_mostrar = datos_paquete_iter["nombre"]
+        if len(nombre_a_mostrar) > ancho_col_nombre - 2: 
+            nombre_a_mostrar = nombre_a_mostrar[:ancho_col_nombre - 3] + "..."
         
         print("{:<{rw}} {:<{nw}} {:<{vw}}".format(
-            rank,
-            nombre_display,
-            paquete_data["ventas"],
-            rw=col_rank_width, nw=col_nombre_width, vw=col_ventas_width)
+            posicion,
+            nombre_a_mostrar,
+            datos_paquete_iter["ventas"],
+            rw=ancho_col_posicion, nw=ancho_col_nombre, vw=ancho_col_ventas)
         )
-    print("-" * line_total_width)
+    print("-" * longitud_total_linea)
     print("\n--- FIN DEL INFORME DE PAQUETES POR VENTAS ---")
 
 #----------------------------------------------------------------------------------------------
@@ -996,7 +974,8 @@ def informePaquetesPorVentas(contratos, paquetes):
 #----------------------------------------------------------------------------------------------
 def main():
     # Inicialización de variables
-    # --------------------- DICCIONARIO TURISTAS ------------------------
+    ##Diccionario de turistas##
+    # --------------------- DICCIONARIO TURISTAS ------------------------#
     turistas = {
         "1": {
             "idTurista": "1", "activo": True, "nombre": "Virginia", "apellido": "Griego", "dni": "14.309.227",
@@ -1049,8 +1028,11 @@ def main():
             "telefonos": {"telefono1": "5491159608477", "telefono2": "43014810", "telefono3": ""}
         }
     }
+    ##Diccionario de paquetes##
+    # --------------------- DICCIONARIO PAQUETES ------------------------#
     paquetes = {
     "1": {
+        "idPaquete": "1",
         "activo": True,
         "nombre": "Aventura en Salta",
         "destino": "Salta",
@@ -1058,12 +1040,13 @@ def main():
         "valor": 210000.0,
         "descripcion": "Excursiones y paisajes del norte argentino",
         "servicios": {
-            "alojamiento": ["Hotel Solar del Cerro"],
-            "actividad": ["City tour y Visita a Cafayate"],
-            "vuelo": ["JetSmart"]
+            "alojamiento": "Hotel Solar del Cerro",
+            "actividad": "City tour y Visita a Cafayate",
+            "vuelo": "JetSmart"
         }
     },
     "2": {
+        "idPaquete": "2",
         "activo": True,
         "nombre": "Mendoza Full Wine",
         "destino": "Mendoza",
@@ -1071,12 +1054,13 @@ def main():
         "valor": 265000.0,
         "descripcion": "Degustaciones y hotel boutique en la montaña",
         "servicios": {
-            "alojamiento": ["Cavas Wine Lodge"],
-            "actividad": ["Bodega Norton y Spa vinoterapia"],
-            "vuelo": ["Aerolíneas Argentinas"]
+            "alojamiento": "Cavas Wine Lodge",
+            "actividad": "Bodega Norton y Spa vinoterapia",
+            "vuelo": "Aerolíneas Argentinas"
         }
     },
     "3": {
+        "idPaquete": "3",
         "activo": True,
         "nombre": "Relax en Iguazú",
         "destino": "Misiones",
@@ -1084,12 +1068,13 @@ def main():
         "valor": 295000.0,
         "descripcion": "Naturaleza, hotel con pileta y parque temático",
         "servicios": {
-            "alojamiento": ["Hotel La Cantera Jungle Lodge"],
-            "actividad": ["Cataratas y Parque de las Aves"],
-            "traslado": ["Aeropuerto - Hotel"]
+            "alojamiento": "Hotel La Cantera Jungle Lodge",
+            "actividad": "Cataratas y Parque de las Aves",
+            "traslado": "Aeropuerto - Hotel"
         }
     },
     "4": {
+        "idPaquete": "4",
         "activo": True,
         "nombre": "Bariloche Aventura",
         "destino": "Bariloche",
@@ -1097,12 +1082,13 @@ def main():
         "valor": 310000.0,
         "descripcion": "Trekking, kayak y nieve en la Patagonia",
         "servicios": {
-            "alojamiento": ["Refugio Piedras Blancas"],
-            "actividad": ["Trekking al cerro y Rafting en el río"],
-            "vuelo": ["Flybondi"]
+            "alojamiento": "Refugio Piedras Blancas",
+            "actividad": "Trekking al cerro y Rafting en el río",
+            "vuelo": "Flybondi"
         }
     },
     "5": {
+        "idPaquete": "5",
         "activo": True,
         "nombre": "Buenos Aires Clásico",
         "destino": "CABA",
@@ -1110,11 +1096,12 @@ def main():
         "valor": 180000.0,
         "descripcion": "Hotel céntrico y city tour cultural",
         "servicios": {
-            "alojamiento": ["Hotel NH Tango"],
-            "actividad": ["City Tour y Cena Tango Show"]
+            "alojamiento": "Hotel NH Tango",
+            "actividad": "City Tour y Cena Tango Show"
         }
     },
     "6": {
+        "idPaquete": "6",
         "activo": True,
         "nombre": "Costa Atlántica",
         "destino": "Mar del Plata",
@@ -1122,12 +1109,13 @@ def main():
         "valor": 155000.0,
         "descripcion": "Playa, paseo costero y hotel con desayuno",
         "servicios": {
-            "alojamiento": ["Hotel Dos Reyes"],
-            "traslado": ["Bus desde Buenos Aires"],
-            "actividad": ["Acuario y puerto"]
+            "alojamiento": "Hotel Dos Reyes",
+            "traslado": "Bus desde Buenos Aires",
+            "actividad": "Acuario y puerto"
         }
     },
     "7": {
+        "idPaquete": "7",
         "activo": True,
         "nombre": "Tucumán Colonial",
         "destino": "Tucumán",
@@ -1135,11 +1123,12 @@ def main():
         "valor": 198000.0,
         "descripcion": "Ruta de la independencia y cerros del NOA",
         "servicios": {
-            "alojamiento": ["Hotel Carlos V"],
-            "actividad": ["Casa de Tucumán y Excursión a Tafí del Valle"]
+            "alojamiento": "Hotel Carlos V",
+            "actividad": "Casa de Tucumán y Excursión a Tafí del Valle"
         }
     },
     "8": {
+        "idPaquete": "8",
         "activo": True,
         "nombre": "Sur Glaciar Express",
         "destino": "El Calafate",
@@ -1147,12 +1136,13 @@ def main():
         "valor": 320000.0,
         "descripcion": "Perito Moreno y navegación",
         "servicios": {
-            "alojamiento": ["Hotel Kosten Aike"],
-            "actividad": ["Glaciar Perito Moreno y Navegación por Lago Argentino"],
-            "vuelo": ["Aerolíneas Argentinas"]
+            "alojamiento": "Hotel Kosten Aike",
+            "actividad": "Glaciar Perito Moreno y Navegación por Lago Argentino",
+            "vuelo": "Aerolíneas Argentinas"
         }
     },
     "9": {
+        "idPaquete": "9",
         "activo": True,
         "nombre": "Córdoba Sierras y Relax",
         "destino": "Córdoba",
@@ -1160,12 +1150,13 @@ def main():
         "valor": 230000.0,
         "descripcion": "Villa General Belgrano, caminatas y spa",
         "servicios": {
-            "alojamiento": ["Cabañas Alpinas"],
-            "actividad": ["Spa y senderismo y Villa General Belgrano"],
-            "traslado": ["Auto alquilado"]
+            "alojamiento": "Cabañas Alpinas",
+            "actividad": "Spa y senderismo y Villa General Belgrano",
+            "traslado": "Auto alquilado"
         }
     },
     "10": {
+        "idPaquete": "10",
         "activo": True,
         "nombre": "San Juan y Valle de la Luna",
         "destino": "San Juan",
@@ -1173,12 +1164,14 @@ def main():
         "valor": 245000.0,
         "descripcion": "Naturaleza, fósiles y aventura paleontológica",
         "servicios": {
-            "alojamiento": ["Hostería del Sol"],
-            "actividad": ["Valle de la Luna y Museo de Dinosaurios"],
-            "traslado": ["Minivan desde aeropuerto"]
+            "alojamiento": "Hostería del Sol",
+            "actividad": "Valle de la Luna y Museo de Dinosaurios",
+            "traslado": "Minivan desde aeropuerto"
         }
     }
-} ### Diccionarios de contratos 
+}
+##Diccionario de contratos##
+# --------------------- DICCIONARIO CONTRATOS ------------------------#
     contratos = { "20000000000000": {
         "activo": True,
         "fecha": "2999.12.31 00:00:00", # Ajustado a YYYY.MM.DD HH:MM:SS
