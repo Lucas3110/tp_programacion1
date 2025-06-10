@@ -73,7 +73,6 @@ def ingresarTurista(turistas):
     }
     print("\nTurista agregado con ID:", nuevo_id)
     return turistas 
-
 def generar_id(turistas):
     """mediante esta funcion, creamos un nuevo id para el nuevo turista"""
     if len(turistas) == 0:
@@ -494,7 +493,7 @@ def mostrarServicios(servicios):
 # Funciones Contrato
 # -------------------------------------
 
-def altaContrato(_paquetes, _contratos, _turistas):
+def altaContrato(_paquetes, _contratos, _turistas,mediosDePago):
     """
     Da de alta un nuevo contrato.
     Solicita el ID del turista, el ID del paquete (validado contra el diccionario de paquetes), 
@@ -516,34 +515,39 @@ def altaContrato(_paquetes, _contratos, _turistas):
     ID del contrato generado (str)
     """
     #Ingreso idTurista
-    _idTurista= str(input("Ingrese su ID de turista: "))
+    _idTurista= (input("Ingrese su ID de turista: "))
     
     #Valida que el ingreso de ID turista se encuentre activo y exista
     _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor= verificaIDturista(_turistas, _idTurista)
     
     #Validación por si el ingreso no es correcto
     while _verificaNumeroDeTuristaBool == False:
-        _idTurista= str(input("ID turista no válido. Ingrese su ID de turista: "))
+        _idTurista= (input("ID turista no válido. Ingrese su ID de turista: "))
         _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor= verificaIDturista(_turistas, _idTurista)
         
     #Ingreso idPaquete
-    _idPaquete= str(input("Ingrese el ID del paquete a abonar: "))
+    _idPaquete= (input("Ingrese el ID del paquete a abonar: "))
     
     _verificaNumeroDePaqueteBool, _verificaNumeroDePaqueteValor= verificaIDpaquete(_idPaquete, _paquetes)
     
     #Validación en bucle por si ingresa mal el número de paquete. 
     while _verificaNumeroDePaqueteBool == False:
-        _idPaquete= str(input("Paquete no válido. Ingrese el ID del paquete a abonar: "))
+        _idPaquete= (input("Paquete no válido. Ingrese el ID del paquete a abonar: "))
         _verificaNumeroDePaqueteBool, _verificaNumeroDePaqueteValor= verificaIDpaquete(_idPaquete, _paquetes)
     
-    #Ingreso cantidadDePersonas 
-    _cantidadDeViajeros= int(input("Ingrese la cantidad de asistentes: "))
-    #Valida cantidadDePersonas
-    cantidadAsistentesValidado= validaCantidadAsistentes(_cantidadDeViajeros)
+    #Ingreso y validación de cantidadDePersonas 
+    entrada = input("Ingrese la cantidad de asistentes: ").strip()
+    while not entrada.isdigit():
+        entrada = input("ERROR. Ingrese un número entero válido: ").strip()
+    _cantidadDeViajeros = int(entrada)
+    cantidadAsistentesValidado = validaCantidadAsistentes(_cantidadDeViajeros)
     
     #Ingreso medio de pago 
-    _medioDePago= str(input("Ingrese medio de pago a utilizar (Efectivo, Transferencia, Tarjeta): ")) #validar
-    
+    _medioDePago= (input("Ingrese medio de pago a utilizar (Efectivo, Transferencia, Tarjeta): ")).strip().capitalize()
+    while _medioDePago not in mediosDePago:
+        _medioDePago = input("Medio no válido. Ingrese uno de los siguientes (Efectivo, Transferencia, Tarjeta): ").strip().capitalize()
+
+
     #Trae el valor del paquete ingresado
     _valorPaquete= _paquetes[_verificaNumeroDePaqueteValor]["valor"]
     
@@ -1485,6 +1489,8 @@ def main():
     }
 }
 
+    mediosDePago = ["Efectivo", "Transferencia", "Tarjeta"]
+
     while True:
         # Menú principal
         print()
@@ -1611,7 +1617,7 @@ def main():
                 if sub == "0": break
                 
                 if sub == "1":
-                    altaContrato(paquetes, contratos, turistas)
+                    altaContrato(paquetes, contratos, turistas,mediosDePago)
                     
                 elif sub == "2":
                     bajaContrato(paquetes, contratos, turistas)
