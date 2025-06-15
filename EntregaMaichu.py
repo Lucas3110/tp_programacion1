@@ -207,23 +207,6 @@ def cargarServicios():
     return servicios
 
 
-def esFloatValido(texto):
-    """
-    Verifica si un texto representa un número flotante válido.
-    Reemplaza comas por puntos y valida el formato numérico.
-
-    parametros:
-        texto(str): Texto ingresado por el usuario.
-
-    Return:
-        True si el texto representa un número flotante válido, False en caso contrario.
-    """
-    texto = texto.replace(",", ".")
-    if texto.count(".") > 1:
-        return False
-    #usamos replace para en caso que ponga algun numero con punto reemplace por nada para que isdigit evalue que sean solo numeros los ingresados.
-    return texto.replace(".", "").isdigit()
-
 def altaPaquete(paquetes):
     """
     Carga un nuevo paquete turístico con datos ingresados por el usuario.
@@ -240,12 +223,16 @@ def altaPaquete(paquetes):
     destino = str(input("Ingrese destino del paquete: ")).strip()
     duracion = str(input("Ingrese duración del paquete (ej. '7 días'): ")).strip()
 
+    #eliminamos la función esfloatValido reemplazando con manejo de errores.
 
-    valorString = input("Ingrese valor por persona: ").strip().replace(",", ".")
-    while not esFloatValido(valorString):
-        print("ERROR!!! debe ingresar un número válido.")
+    while True:
         valorString = input("Ingrese valor por persona: ").strip().replace(",", ".")
-    valor = float(valorString)
+        try:
+            valor = float(valorString)
+            break
+        except ValueError:
+            print("ERROR!!! debe ingresar un número válido.")
+
 
     descripcion = input("Ingrese una breve descripción del paquete: ").strip()
 
@@ -346,10 +333,11 @@ def modificarPaquete(paquetes):
 
         elif opcion == "4":
             nuevo = input("Nuevo valor por persona: ").strip().replace(",", ".")
-            if esFloatValido(nuevo):
+            #acá también sacamos el esfloatValido y usamos manejo de errores.
+            try:
                 paquete["valor"] = float(nuevo)
                 print("Valor actualizado.")
-            else:
+            except ValueError:
                 print("Valor inválido. No se modificó.")
 
         elif opcion == "5":
@@ -417,7 +405,7 @@ def eliminarPaquete(paquetes):
         return paquetes
 
     id_paquete = input("\nIngrese el ID del paquete que desea eliminar: ").strip()
-
+    #acá podríamos usar manejo de errores de KeyError pero lo haría más largo y menos claro que la versión orcoon lógica básica.
     if id_paquete not in paquetes:
         print("Ese paquete no existe.")
         return paquetes
@@ -466,15 +454,21 @@ def mostrarPaquete(id_paquete, datos):
     Parametros:
         id_paquete: ID del paquete.
         datos: Diccionario con los datos del paquete.
-    """    
-    print("ID:", id_paquete)
-    print("Nombre:", datos["nombre"])
-    print("Destino:", datos["destino"])
-    print("Duración:", datos["duracion"])
-    print("Valor por persona: $", datos["valor"])
-    print("Descripción:", datos["descripcion"])
-    print("Servicios:")
-    mostrarServicios(datos["servicios"])
+    """ 
+    #agregamos este try-except para manejar errores de datos faltantes en el diccionario.   
+    try:
+        print("ID:", id_paquete)
+        print("Nombre:", datos["nombre"])
+        print("Destino:", datos["destino"])
+        print("Duración:", datos["duracion"])
+        print("Valor por persona: $", datos["valor"])
+        print("Descripción:", datos["descripcion"])
+        print("Servicios:")
+        mostrarServicios(datos["servicios"])
+    #la variable campoFaltante va a guardar el dato que faltó para que no falle el programa.    
+    except KeyError as campoFaltante:
+        print(f"ERROR!!! Falta el dato '{campoFaltante}' en el paquete. No se pudo mostrar completamente.")
+
 
 
 def mostrarServicios(servicios):
@@ -536,23 +530,33 @@ def altaContrato(_paquetes, _contratos, _turistas,mediosDePago):
         _verificaNumeroDePaqueteBool, _verificaNumeroDePaqueteValor= verificaIDpaquete(_idPaquete, _paquetes)
     
     #Ingreso y validación de cantidadDePersonas 
-    entrada = input("Ingrese la cantidad de asistentes: ").strip()
-    while not entrada.isdigit():
-        entrada = input("ERROR. Ingrese un número entero válido: ").strip()
-    _cantidadDeViajeros = int(entrada)
+    #agregamos try-except en vez de isdigit para validar y convertir todo en un solo paso.
+    while True:
+        entrada = input("Ingrese la cantidad de asistentes: ").strip()
+        try:
+            _cantidadDeViajeros = int(entrada)
+            break
+        except ValueError:
+            print("ERROR. Ingrese un número entero válido.")
+
     cantidadAsistentesValidado = validaCantidadAsistentes(_cantidadDeViajeros)
+
     
     #Ingreso medio de pago 
     _medioDePago= (input("Ingrese medio de pago a utilizar (Efectivo, Transferencia, Tarjeta): ")).strip().capitalize()
     while _medioDePago not in mediosDePago:
         _medioDePago = input("Medio no válido. Ingrese uno de los siguientes (Efectivo, Transferencia, Tarjeta): ").strip().capitalize()
 
+    #agregamos try-except para evitar errores si el paquete no tiene el dato "valor" cargado.
+    # Trae el valor del paquete ingresado
+    try:
+        _valorPaquete = _paquetes[_verificaNumeroDePaqueteValor]["valor"]
+    except KeyError:
+        print("ERROR: el paquete seleccionado no tiene un valor definido.")
+        return
 
-    #Trae el valor del paquete ingresado
-    _valorPaquete= _paquetes[_verificaNumeroDePaqueteValor]["valor"]
-    
-    #Calcula el valor total del contrato
-    _total= _valorPaquete * cantidadAsistentesValidado
+    # Calcula el valor total del contrato
+    _total = _valorPaquete * cantidadAsistentesValidado
     print("El valor total por",cantidadAsistentesValidado, "personas es de: " ,_total )
     
     #Fecha del contrato 
