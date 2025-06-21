@@ -73,7 +73,6 @@ def ingresarTurista(turistas):
     }
     print("\nTurista agregado con ID:", nuevo_id)
     return turistas 
-
 def generar_id(turistas):
     """mediante esta funcion, creamos un nuevo id para el nuevo turista"""
     if len(turistas) == 0:
@@ -143,46 +142,54 @@ def modificarTurista(turistas):
 
 
 def listarTuristasActivos(turistas):
-    """Creamos una lista de turistas activos"""
-
+    """Lista todos los turistas activos y maneja errores."""
     print("\nListado de turistas activos:")
     print("ID   Nombre         Apellido       DNI         Email                  Teléfonos")
-    print("-"*80)
+    print("-" * 80)
+    hubo_activos = False
     for t in turistas.values():
-        if t["activo"]:
-            tels = ", ".join(t["telefonos"].values())
-            print(f'{t["idTurista"]:<4} {t["nombre"]:<14} {t["apellido"]:<14} {t["dni"]:<12} {t["email"]:<22} {tels}')
-    print("-"*80)
+        try:
+            if t.get("activo", False):
+                tels = ", ".join(t.get("telefonos", {}).values())
+                print(f'{t.get("idTurista", "-"):<4} {t.get("nombre", "-"):<14} {t.get("apellido", "-"):<14} {t.get("dni", "-"):<12} {t.get("email", "-"):<22} {tels}')
+                hubo_activos = True
+        except Exception as e:
+            print(f"[ERROR]: Un turista tiene datos mal cargados. Detalle: {e}")
+    if not hubo_activos:
+        print("No hay turistas activos en el sistema.")
+    print("-" * 80)
     return turistas
+
 
 def eliminarTuristas(turistas):
-    """Realiza la baja lógica de un turista, marcándolo como inactivo."""
+    """Baja lógica de un turista (marca como inactivo). Maneja errores y valida ID."""
     print("\n--- ELIMINAR TURISTA ---")
-    id_turista_eliminar = input("Ingrese el ID del turista que desea eliminar: ").strip()
-
-    if id_turista_eliminar not in turistas:
-        print("Error: El ID del turista no existe.")
-        return turistas
-
-    if not turistas[id_turista_eliminar]["activo"]:
-        print("Error: El turista ya se encuentra inactivo.")
-        return turistas
-
-    turista_a_eliminar = turistas[id_turista_eliminar]
-    print(f"\nDatos del turista a eliminar:")
-    print(f"  ID: {turista_a_eliminar['idTurista']}")
-    print(f"  Nombre: {turista_a_eliminar['nombre']} {turista_a_eliminar['apellido']}")
-    print(f"  DNI: {turista_a_eliminar['dni']}")
-    
-    confirmacion = input(f"¿Está seguro que desea eliminar (desactivar) al turista '{turista_a_eliminar['nombre']} {turista_a_eliminar['apellido']}' (ID: {id_turista_eliminar})? (s/n): ").strip().lower()
-    
-    if confirmacion == "s":
-        turistas[id_turista_eliminar]["activo"] = False
-        print(f"Turista '{id_turista_eliminar}' desactivado correctamente.")
-    else:
-        print("Eliminación cancelada.")
-        
+    while True:
+        id_turista_eliminar = input("Ingrese el ID del turista que desea eliminar: ").strip()
+        if id_turista_eliminar not in turistas:
+            print("Error: El ID del turista no existe. Intente de nuevo.")
+            continue
+        try:
+            if not turistas[id_turista_eliminar].get("activo", False):
+                print("Error: El turista ya se encuentra inactivo.")
+                return turistas
+            turista = turistas[id_turista_eliminar]
+            print(f"\nDatos del turista a eliminar:")
+            print(f"  ID: {turista.get('idTurista', '-')}")
+            print(f"  Nombre: {turista.get('nombre', '-')} {turista.get('apellido', '-')}")
+            print(f"  DNI: {turista.get('dni', '-')}")
+            confirmacion = input(f"¿Está seguro que desea eliminar (desactivar) al turista '{turista.get('nombre', '-')} {turista.get('apellido', '-')}' (ID: {id_turista_eliminar})? (s/n): ").strip().lower()
+            if confirmacion == "s":
+                turistas[id_turista_eliminar]["activo"] = False
+                print(f"Turista '{id_turista_eliminar}' desactivado correctamente.")
+            else:
+                print("Eliminación cancelada.")
+            break
+        except Exception as e:
+            print(f"[ERROR]: El turista tiene datos mal cargados. Detalle: {e}")
+            break
     return turistas
+
 
 #----------------------------------------------------------------------------------------------
 # FUNCIONES PARA CREAR PAQUETES
@@ -208,23 +215,6 @@ def cargarServicios():
     return servicios
 
 
-def esFloatValido(texto):
-    """
-    Verifica si un texto representa un número flotante válido.
-    Reemplaza comas por puntos y valida el formato numérico.
-
-    parametros:
-        texto(str): Texto ingresado por el usuario.
-
-    Return:
-        True si el texto representa un número flotante válido, False en caso contrario.
-    """
-    texto = texto.replace(",", ".")
-    if texto.count(".") > 1:
-        return False
-    #usamos replace para en caso que ponga algun numero con punto reemplace por nada para que isdigit evalue que sean solo numeros los ingresados.
-    return texto.replace(".", "").isdigit()
-
 def altaPaquete(paquetes):
     """
     Carga un nuevo paquete turístico con datos ingresados por el usuario.
@@ -241,12 +231,16 @@ def altaPaquete(paquetes):
     destino = str(input("Ingrese destino del paquete: ")).strip()
     duracion = str(input("Ingrese duración del paquete (ej. '7 días'): ")).strip()
 
+    #eliminamos la función esfloatValido reemplazando con manejo de errores.
 
-    valorString = input("Ingrese valor por persona: ").strip().replace(",", ".")
-    while not esFloatValido(valorString):
-        print("ERROR!!! debe ingresar un número válido.")
+    while True:
         valorString = input("Ingrese valor por persona: ").strip().replace(",", ".")
-    valor = float(valorString)
+        try:
+            valor = float(valorString)
+            break
+        except ValueError:
+            print("ERROR!!! debe ingresar un número válido.")
+
 
     descripcion = input("Ingrese una breve descripción del paquete: ").strip()
 
@@ -347,10 +341,11 @@ def modificarPaquete(paquetes):
 
         elif opcion == "4":
             nuevo = input("Nuevo valor por persona: ").strip().replace(",", ".")
-            if esFloatValido(nuevo):
+            #acá también sacamos el esfloatValido y usamos manejo de errores.
+            try:
                 paquete["valor"] = float(nuevo)
                 print("Valor actualizado.")
-            else:
+            except ValueError:
                 print("Valor inválido. No se modificó.")
 
         elif opcion == "5":
@@ -418,7 +413,7 @@ def eliminarPaquete(paquetes):
         return paquetes
 
     id_paquete = input("\nIngrese el ID del paquete que desea eliminar: ").strip()
-
+    #acá podríamos usar manejo de errores de KeyError pero lo haría más largo y menos claro que la versión orcoon lógica básica.
     if id_paquete not in paquetes:
         print("Ese paquete no existe.")
         return paquetes
@@ -467,15 +462,21 @@ def mostrarPaquete(id_paquete, datos):
     Parametros:
         id_paquete: ID del paquete.
         datos: Diccionario con los datos del paquete.
-    """    
-    print("ID:", id_paquete)
-    print("Nombre:", datos["nombre"])
-    print("Destino:", datos["destino"])
-    print("Duración:", datos["duracion"])
-    print("Valor por persona: $", datos["valor"])
-    print("Descripción:", datos["descripcion"])
-    print("Servicios:")
-    mostrarServicios(datos["servicios"])
+    """ 
+    #agregamos este try-except para manejar errores de datos faltantes en el diccionario.   
+    try:
+        print("ID:", id_paquete)
+        print("Nombre:", datos["nombre"])
+        print("Destino:", datos["destino"])
+        print("Duración:", datos["duracion"])
+        print("Valor por persona: $", datos["valor"])
+        print("Descripción:", datos["descripcion"])
+        print("Servicios:")
+        mostrarServicios(datos["servicios"])
+    #la variable campoFaltante va a guardar el dato que faltó para que no falle el programa.    
+    except KeyError as campoFaltante:
+        print(f"ERROR!!! Falta el dato '{campoFaltante}' en el paquete. No se pudo mostrar completamente.")
+
 
 
 def mostrarServicios(servicios):
@@ -494,7 +495,7 @@ def mostrarServicios(servicios):
 # Funciones Contrato
 # -------------------------------------
 
-def altaContrato(_paquetes, _contratos, _turistas):
+def altaContrato(_paquetes, _contratos, _turistas,mediosDePago):
     """
     Da de alta un nuevo contrato.
     Solicita el ID del turista, el ID del paquete (validado contra el diccionario de paquetes), 
@@ -516,39 +517,54 @@ def altaContrato(_paquetes, _contratos, _turistas):
     ID del contrato generado (str)
     """
     #Ingreso idTurista
-    _idTurista= str(input("Ingrese su ID de turista: "))
+    _idTurista= (input("Ingrese su ID de turista: "))
     
     #Valida que el ingreso de ID turista se encuentre activo y exista
     _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor= verificaIDturista(_turistas, _idTurista)
     
     #Validación por si el ingreso no es correcto
     while _verificaNumeroDeTuristaBool == False:
-        _idTurista= str(input("ID turista no válido. Ingrese su ID de turista: "))
+        _idTurista= (input("ID turista no válido. Ingrese su ID de turista: "))
         _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor= verificaIDturista(_turistas, _idTurista)
         
     #Ingreso idPaquete
-    _idPaquete= str(input("Ingrese el ID del paquete a abonar: "))
+    _idPaquete= (input("Ingrese el ID del paquete a abonar: "))
     
     _verificaNumeroDePaqueteBool, _verificaNumeroDePaqueteValor= verificaIDpaquete(_idPaquete, _paquetes)
     
     #Validación en bucle por si ingresa mal el número de paquete. 
     while _verificaNumeroDePaqueteBool == False:
-        _idPaquete= str(input("Paquete no válido. Ingrese el ID del paquete a abonar: "))
+        _idPaquete= (input("Paquete no válido. Ingrese el ID del paquete a abonar: "))
         _verificaNumeroDePaqueteBool, _verificaNumeroDePaqueteValor= verificaIDpaquete(_idPaquete, _paquetes)
     
-    #Ingreso cantidadDePersonas 
-    _cantidadDeViajeros= int(input("Ingrese la cantidad de asistentes: "))
-    #Valida cantidadDePersonas
-    cantidadAsistentesValidado= validaCantidadAsistentes(_cantidadDeViajeros)
+    #Ingreso y validación de cantidadDePersonas 
+    #agregamos try-except en vez de isdigit para validar y convertir todo en un solo paso.
+    while True:
+        entrada = input("Ingrese la cantidad de asistentes: ").strip()
+        try:
+            _cantidadDeViajeros = int(entrada)
+            break
+        except ValueError:
+            print("ERROR. Ingrese un número entero válido.")
+
+    cantidadAsistentesValidado = validaCantidadAsistentes(_cantidadDeViajeros)
+
     
     #Ingreso medio de pago 
-    _medioDePago= str(input("Ingrese medio de pago a utilizar (Efectivo, Transferencia, Tarjeta): ")) #validar
-    
-    #Trae el valor del paquete ingresado
-    _valorPaquete= _paquetes[_verificaNumeroDePaqueteValor]["valor"]
-    
-    #Calcula el valor total del contrato
-    _total= _valorPaquete * cantidadAsistentesValidado
+    _medioDePago= (input("Ingrese medio de pago a utilizar (Efectivo, Transferencia, Tarjeta): ")).strip().capitalize()
+    while _medioDePago not in mediosDePago:
+        _medioDePago = input("Medio no válido. Ingrese uno de los siguientes (Efectivo, Transferencia, Tarjeta): ").strip().capitalize()
+
+    #agregamos try-except para evitar errores si el paquete no tiene el dato "valor" cargado.
+    # Trae el valor del paquete ingresado
+    try:
+        _valorPaquete = _paquetes[_verificaNumeroDePaqueteValor]["valor"]
+    except KeyError:
+        print("ERROR: el paquete seleccionado no tiene un valor definido.")
+        return
+
+    # Calcula el valor total del contrato
+    _total = _valorPaquete * cantidadAsistentesValidado
     print("El valor total por",cantidadAsistentesValidado, "personas es de: " ,_total )
     
     #Fecha del contrato 
@@ -855,7 +871,7 @@ def listar_operaciones_mes(contratos, paquetes, turistas):
                     hubo_datos = hubo_datos + 1
 
     if hubo_datos == 0:
-        print("No se registraron operaciones este mes.".center(95))
+        print("No se registraron operaciones este mes.")
     print("-" * 95)
 
 def resumen_cantidad_contratos_por_mes(contratos, paquetes):
@@ -1485,6 +1501,8 @@ def main():
     }
 }
 
+    mediosDePago = ["Efectivo", "Transferencia", "Tarjeta"]
+
     while True:
         # Menú principal
         print()
@@ -1611,7 +1629,7 @@ def main():
                 if sub == "0": break
                 
                 if sub == "1":
-                    altaContrato(paquetes, contratos, turistas)
+                    altaContrato(paquetes, contratos, turistas,mediosDePago)
                     
                 elif sub == "2":
                     bajaContrato(paquetes, contratos, turistas)
