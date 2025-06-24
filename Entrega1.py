@@ -745,149 +745,182 @@ def reporteResumenMontosPorMes():
     Muestra un informe de los montos totales de contratos por paquete, mes y año (últimos 12 meses).
     Lee los datos del archivo y los agrupa por mes y paquete.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
-    print("\n--- GENERANDO INFORME DE RESUMEN DE MONTOS POR MES Y AÑO (ÚLTIMOS 12 MESES) ---")
-    datos_agrupados = {}
-    for id_contrato, contrato_info in contratos.items(): 
-        if contrato_info.get("activo", False):
-            fecha_contrato_str = contrato_info["fecha"]
-            fecha_contrato_obj = datetime.datetime.strptime(fecha_contrato_str, "%Y.%m.%d %H:%M:%S")
-            año_contrato = fecha_contrato_obj.year
-            mes_contrato = fecha_contrato_obj.month
-            id_paquete = contrato_info["idPaquete"]
-            monto = float(contrato_info["Total"]) 
-            datos_agrupados.setdefault(año_contrato, {}).setdefault(id_paquete, {})
-            datos_agrupados[año_contrato][id_paquete].setdefault(mes_contrato, 0.0)
-            datos_agrupados[año_contrato][id_paquete][mes_contrato] += monto
-    if not datos_agrupados:
-        print("No hay datos de contratos activos para generar el informe.")
-        return
-    hoy = datetime.datetime.now()
-    año_actual_num = hoy.year
-    mes_actual_num = hoy.month
-    año_inicio_rango = año_actual_num
-    mes_inicio_rango = mes_actual_num - 11 
-    if mes_inicio_rango <= 0:
-        mes_inicio_rango += 12
-        año_inicio_rango -= 1
-    nombres_meses_abreviados = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"]
-    ancho_col_producto = 25
-    ancho_col_mes = 11 
-    años_con_datos_en_diccionario = set(datos_agrupados.keys())
-    años_del_informe_potenciales = set()
-    años_del_informe_potenciales.add(año_inicio_rango)
-    años_del_informe_potenciales.add(año_actual_num)
-    sorted_años_a_mostrar = sorted(list(años_con_datos_en_diccionario.intersection(años_del_informe_potenciales)))
-    if not sorted_años_a_mostrar:
-        print(f"No hay datos de contratos en los últimos 12 meses (desde {nombres_meses_abreviados[mes_inicio_rango-1]}.{str(año_inicio_rango)[-2:]} hasta {nombres_meses_abreviados[mes_actual_num-1]}.{str(año_actual_num)[-2:]}) que coincidan con los años procesados.")
-        return
-    hubo_datos_en_rango_visible = False
-    for año_actual_informe in sorted_años_a_mostrar:
-        longitud_linea = ancho_col_producto + 1 + (ancho_col_mes * 12)
-        print() 
-        print("-" * longitud_linea)
-        print("PESOS TOTALES POR MES")
-        print("-" * longitud_linea)
-        linea_encabezado = f"{'Producto':<{ancho_col_producto}} "
-        for i in range(12):
-            mes_año_str = f"{nombres_meses_abreviados[i]}.{str(año_actual_informe)[-2:]}"
-            linea_encabezado += f"{mes_año_str:^{ancho_col_mes}}"
-        print(linea_encabezado)
-        print("-" * longitud_linea)
-        paquetes_activos_ordenados = sorted(
-            [(id_pqt, info) for id_pqt, info in paquetes.items() if info.get("activo", False)],
-            key=lambda item: item[1].get("nombre", item[0])
-        )
-        for id_pqt, info_paquete in paquetes_activos_ordenados:
-            nombre_paquete_display = info_paquete.get("nombre", f"Paquete ID {id_pqt}")
-            if len(nombre_paquete_display) > ancho_col_producto -3: 
-                 nombre_paquete_truncado = nombre_paquete_display[:ancho_col_producto-4] + "..."
-            else:
-                 nombre_paquete_truncado = nombre_paquete_display
-            linea_paquete = f"{nombre_paquete_truncado:<{ancho_col_producto}} "
-            montos_paquete_este_año = datos_agrupados.get(año_actual_informe, {}).get(id_pqt, {})
-            for mes_num in range(1, 13):
-                monto_del_mes_original = montos_paquete_este_año.get(mes_num, 0.0)
-                monto_a_mostrar = 0.0
-                es_mes_valido_en_rango = False
-                if año_actual_informe == año_inicio_rango:
-                    if año_actual_informe == año_actual_num: 
-                        if mes_num >= mes_inicio_rango and mes_num <= mes_actual_num:
+    try:
+        turistas, paquetes, contratos = cargar_datos_json()
+        print("\n--- GENERANDO INFORME DE RESUMEN DE MONTOS POR MES Y AÑO (ÚLTIMOS 12 MESES) ---")
+        datos_agrupados = {}
+        for id_contrato, contrato_info in contratos.items(): 
+            try:
+                if contrato_info.get("activo", False):
+                    fecha_contrato_str = contrato_info.get("fecha", "")
+                    if fecha_contrato_str:
+                        fecha_contrato_obj = datetime.datetime.strptime(fecha_contrato_str, "%Y.%m.%d %H:%M:%S")
+                        año_contrato = fecha_contrato_obj.year
+                        mes_contrato = fecha_contrato_obj.month
+                        id_paquete = contrato_info.get("idPaquete", "")
+                        total_str = contrato_info.get("Total", 0)
+                        monto = float(total_str) 
+                        datos_agrupados.setdefault(año_contrato, {}).setdefault(id_paquete, {})
+                        datos_agrupados[año_contrato][id_paquete].setdefault(mes_contrato, 0.0)
+                        datos_agrupados[año_contrato][id_paquete][mes_contrato] += monto
+            except (ValueError, TypeError) as e:
+                print(f"[ERROR]: Se encontró un contrato con fecha o monto mal formateado ({id_contrato}). Detalle: {e}")
+            except Exception as e:
+                print(f"[ERROR]: Problema al procesar contrato {id_contrato}. Detalle: {e}")
+                
+        if not datos_agrupados:
+            print("No hay datos de contratos activos para generar el informe.")
+            return
+        hoy = datetime.datetime.now()
+        año_actual_num = hoy.year
+        mes_actual_num = hoy.month
+        año_inicio_rango = año_actual_num
+        mes_inicio_rango = mes_actual_num - 11 
+        if mes_inicio_rango <= 0:
+            mes_inicio_rango += 12
+            año_inicio_rango -= 1
+        nombres_meses_abreviados = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"]
+        ancho_col_producto = 25
+        ancho_col_mes = 11 
+        años_con_datos_en_diccionario = set(datos_agrupados.keys())
+        años_del_informe_potenciales = set()
+        años_del_informe_potenciales.add(año_inicio_rango)
+        años_del_informe_potenciales.add(año_actual_num)
+        sorted_años_a_mostrar = sorted(list(años_con_datos_en_diccionario.intersection(años_del_informe_potenciales)))
+        if not sorted_años_a_mostrar:
+            print(f"No hay datos de contratos en los últimos 12 meses (desde {nombres_meses_abreviados[mes_inicio_rango-1]}.{str(año_inicio_rango)[-2:]} hasta {nombres_meses_abreviados[mes_actual_num-1]}.{str(año_actual_num)[-2:]}) que coincidan con los años procesados.")
+            return
+        hubo_datos_en_rango_visible = False
+        for año_actual_informe in sorted_años_a_mostrar:
+            longitud_linea = ancho_col_producto + 1 + (ancho_col_mes * 12)
+            print() 
+            print("-" * longitud_linea)
+            print("PESOS TOTALES POR MES")
+            print("-" * longitud_linea)
+            linea_encabezado = f"{'Producto':<{ancho_col_producto}} "
+            for i in range(12):
+                mes_año_str = f"{nombres_meses_abreviados[i]}.{str(año_actual_informe)[-2:]}"
+                linea_encabezado += f"{mes_año_str:^{ancho_col_mes}}"
+            print(linea_encabezado)
+            print("-" * longitud_linea)
+            paquetes_activos_ordenados = sorted(
+                [(id_pqt, info) for id_pqt, info in paquetes.items() if info.get("activo", False)],
+                key=lambda item: item[1].get("nombre", item[0])
+            )
+            for id_pqt, info_paquete in paquetes_activos_ordenados:
+                nombre_paquete_display = info_paquete.get("nombre", f"Paquete ID {id_pqt}")
+                if len(nombre_paquete_display) > ancho_col_producto -3: 
+                     nombre_paquete_truncado = nombre_paquete_display[:ancho_col_producto-4] + "..."
+                else:
+                     nombre_paquete_truncado = nombre_paquete_display
+                linea_paquete = f"{nombre_paquete_truncado:<{ancho_col_producto}} "
+                montos_paquete_este_año = datos_agrupados.get(año_actual_informe, {}).get(id_pqt, {})
+                for mes_num in range(1, 13):
+                    monto_del_mes_original = montos_paquete_este_año.get(mes_num, 0.0)
+                    monto_a_mostrar = 0.0
+                    es_mes_valido_en_rango = False
+                    if año_actual_informe == año_inicio_rango:
+                        if año_actual_informe == año_actual_num: 
+                            if mes_num >= mes_inicio_rango and mes_num <= mes_actual_num:
+                                es_mes_valido_en_rango = True
+                        else: 
+                            if mes_num >= mes_inicio_rango:
+                                es_mes_valido_en_rango = True
+                    elif año_actual_informe == año_actual_num: 
+                        if mes_num <= mes_actual_num:
                             es_mes_valido_en_rango = True
-                    else: 
-                        if mes_num >= mes_inicio_rango:
-                            es_mes_valido_en_rango = True
-                elif año_actual_informe == año_actual_num: 
-                    if mes_num <= mes_actual_num:
-                        es_mes_valido_en_rango = True
-                if es_mes_valido_en_rango:
-                    monto_a_mostrar = monto_del_mes_original
-                    if monto_a_mostrar > 0: hubo_datos_en_rango_visible = True
-                linea_paquete += f"{monto_a_mostrar:>{ancho_col_mes-1}.2f} " 
-            print(linea_paquete)
-        print("-" * longitud_linea)
-    if not hubo_datos_en_rango_visible and sorted_años_a_mostrar:
-        print(f"No se encontraron operaciones con montos en los últimos 12 meses (desde {nombres_meses_abreviados[mes_inicio_rango-1]}.{str(año_inicio_rango)[-2:]} hasta {nombres_meses_abreviados[mes_actual_num-1]}.{str(año_actual_num)[-2:]}).")
-    print("\n--- FIN DEL INFORME ---")
+                    if es_mes_valido_en_rango:
+                        monto_a_mostrar = monto_del_mes_original
+                        if monto_a_mostrar > 0: hubo_datos_en_rango_visible = True
+                    linea_paquete += f"{monto_a_mostrar:>{ancho_col_mes-1}.2f} " 
+                print(linea_paquete)
+            print("-" * longitud_linea)
+        if not hubo_datos_en_rango_visible and sorted_años_a_mostrar:
+            print(f"No se encontraron operaciones con montos en los últimos 12 meses (desde {nombres_meses_abreviados[mes_inicio_rango-1]}.{str(año_inicio_rango)[-2:]} hasta {nombres_meses_abreviados[mes_actual_num-1]}.{str(año_actual_num)[-2:]}).")
+        print("\n--- FIN DEL INFORME ---")
+    except Exception as e:
+        print("No hay información suficiente para generar el informe. Detalle:", e)
 
 def informePaquetesPorVentas():
     """
-    Muestra un informe de los paquetes ordenados por cantidad de ventas (de menos a más).
+    Muestra un informe de los 5 paquetes menos vendidos.
     Lee los datos del archivo y cuenta las ventas de cada paquete activo.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
-    print("\n--- INFORME DE PAQUETES POR CANTIDAD DE VENTAS (DE MENOS A MÁS) ---")
-    ventas_por_paquete = {}
-    for id_pqt, paquete_info in paquetes.items():
-        if paquete_info.get("activo", False):
-            ventas_por_paquete[id_pqt] = {
-                "nombre": paquete_info.get("nombre", f"Paquete ID {id_pqt}"),
-                "ventas": 0
-            }
-    if not ventas_por_paquete:
-        print("No hay paquetes activos para generar el informe.")
-        return
-    for contrato_info in contratos.values():
-        if contrato_info.get("activo", False):
-            id_paquete_contratado = contrato_info.get("idPaquete")
-            if id_paquete_contratado in ventas_por_paquete:
-                ventas_por_paquete[id_paquete_contratado]["ventas"] += 1
-    lista_paquetes_ventas = []
-    for id_pqt, datos_paquete in ventas_por_paquete.items():
-        lista_paquetes_ventas.append({
-            "id": id_pqt,
-            "nombre": datos_paquete["nombre"],
-            "ventas": datos_paquete["ventas"]
-        })
-    lista_paquetes_ventas_ordenada = sorted(
-        lista_paquetes_ventas, 
-        key=lambda x: (x["ventas"], x["nombre"])
-    )
-    if not lista_paquetes_ventas_ordenada:
-        print("No se encontraron datos de ventas para los paquetes activos.")
-        return
-    ancho_col_posicion = 5
-    ancho_col_nombre = 35 
-    ancho_col_ventas = 10
-    longitud_total_linea = ancho_col_posicion + ancho_col_nombre + ancho_col_ventas + 3 
-    print("\n{:<{rw}} {:<{nw}} {:<{vw}}".format(
-        "Posición", "Nombre del Paquete", "Ventas",
-        rw=ancho_col_posicion, nw=ancho_col_nombre, vw=ancho_col_ventas)
-    )
-    print("-" * longitud_total_linea)
-    for i, datos_paquete_iter in enumerate(lista_paquetes_ventas_ordenada):
-        posicion = i + 1
-        nombre_a_mostrar = datos_paquete_iter["nombre"]
-        if len(nombre_a_mostrar) > ancho_col_nombre - 2: 
-            nombre_a_mostrar = nombre_a_mostrar[:ancho_col_nombre - 3] + "..."
-        print("{:<{rw}} {:<{nw}} {:<{vw}}".format(
-            posicion,
-            nombre_a_mostrar,
-            datos_paquete_iter["ventas"],
+    try:
+        turistas, paquetes, contratos = cargar_datos_json()
+        print("\n--- INFORME DE LOS 5 PAQUETES MENOS VENDIDOS ---")
+
+        ventas_por_paquete = {}
+
+        for id_pqt, paquete_info in paquetes.items():
+            try:
+                if paquete_info.get("activo", False):
+                    ventas_por_paquete[id_pqt] = {
+                        "nombre": paquete_info.get("nombre", f"Paquete ID {id_pqt}"),
+                        "ventas": 0
+                    }
+            except Exception as e:
+                print(f"[ERROR]: Problema al procesar paquete {id_pqt}. Detalle: {e}")
+
+        if not ventas_por_paquete:
+            print("No hay paquetes activos para generar el informe.")
+            return
+
+        for contrato_info in contratos.values():
+            try:
+                if contrato_info.get("activo", False):
+                    id_paquete_contratado = contrato_info.get("idPaquete")
+                    if id_paquete_contratado in ventas_por_paquete:
+                        ventas_por_paquete[id_paquete_contratado]["ventas"] += 1
+            except Exception as e:
+                print(f"[ERROR]: Se encontró un contrato mal cargado. Detalle: {e}")
+        
+        lista_paquetes_ventas = []
+        for id_pqt, datos_paquete in ventas_por_paquete.items():
+            lista_paquetes_ventas.append({
+                "id": id_pqt,
+                "nombre": datos_paquete["nombre"],
+                "ventas": datos_paquete["ventas"]
+            })
+        
+        lista_paquetes_ventas_ordenada = sorted(
+            lista_paquetes_ventas, 
+            key=lambda x: (x["ventas"], x["nombre"])
+        )
+
+        if not lista_paquetes_ventas_ordenada:
+            print("No se encontraron datos de ventas para los paquetes activos.")
+            return
+
+        # Tomar solo los primeros 5 paquetes menos vendidos
+        top_5_menos_vendidos = lista_paquetes_ventas_ordenada[:5]
+
+        ancho_col_posicion = 5
+        ancho_col_nombre = 35 
+        ancho_col_ventas = 10
+        longitud_total_linea = ancho_col_posicion + ancho_col_nombre + ancho_col_ventas + 3 
+
+        print("\n{:<{rw}} {:<{nw}} {:<{vw}}".format(
+            "Posición", "Nombre del Paquete", "Ventas",
             rw=ancho_col_posicion, nw=ancho_col_nombre, vw=ancho_col_ventas)
         )
-    print("-" * longitud_total_linea)
-    print("\n--- FIN DEL INFORME DE PAQUETES POR VENTAS ---")
+        print("-" * longitud_total_linea)
+        for i, datos_paquete_iter in enumerate(top_5_menos_vendidos):
+            posicion = i + 1
+            nombre_a_mostrar = datos_paquete_iter["nombre"]
+            if len(nombre_a_mostrar) > ancho_col_nombre - 2: 
+                nombre_a_mostrar = nombre_a_mostrar[:ancho_col_nombre - 3] + "..."
+            
+            print("{:<{rw}} {:<{nw}} {:<{vw}}".format(
+                posicion,
+                nombre_a_mostrar,
+                datos_paquete_iter["ventas"],
+                rw=ancho_col_posicion, nw=ancho_col_nombre, vw=ancho_col_ventas)
+            )
+        print("-" * longitud_total_linea)
+        print("\n--- FIN DEL INFORME DE LOS 5 PAQUETES MENOS VENDIDOS ---")
+    except Exception as e:
+        print("No hay información suficiente para generar el informe. Detalle:", e)
 
 #----------------------------------------------------------------------------------------------
 # CUERPO PRINCIPAL
