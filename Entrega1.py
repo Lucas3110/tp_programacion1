@@ -61,13 +61,11 @@ def guardar_datos_json(turistas, paquetes, contratos):
 #----------------------------------------------------------------------------------------------
 # FUNCIONES TURISTAS
 #----------------------------------------------------------------------------------------------
-def ingresarTurista():
+def ingresarTurista(turistas, paquetes, contratos):
     """
     Permite ingresar un nuevo turista al sistema.
     Solicita los datos básicos y teléfonos, valida los datos y guarda el turista en el archivo.
     """
-
-    turistas, paquetes, contratos = cargar_datos_json()
     print("\n--- INGRESO DE NUEVO TURISTA ---")
     nuevo_id = generar_id(turistas)
     nombre = input("Ingrese nombre del turista: ").strip()
@@ -113,7 +111,7 @@ def ingresarTurista():
     }
     guardar_datos_json(turistas, paquetes, contratos)
     print("\nTurista agregado con ID:", nuevo_id)
-    return
+    return turistas
 
 def generar_id(turistas):
     """
@@ -129,20 +127,19 @@ def generar_id(turistas):
                 max_id = int(key)
         return str(max_id + 1)
 
-def modificarTurista():
+def modificarTurista(turistas, paquetes, contratos):
     """
     Permite modificar los datos de un turista existente.
     Solicita el ID, muestra opciones y actualiza los datos elegidos.
     Guarda los cambios en el archivo.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
     print("\n--- MODIFICAR INFORMACION DE TURISTA ---")
-    idTurista=input("Ingresar ID de turista que desea modificar: ")
+    idTurista = input("Ingresar ID de turista que desea modificar: ")
 
     if idTurista not in turistas:
         print("Id incorrecto, ingrese ID")
-        return
-    
+        return turistas
+     
     turista = turistas[idTurista]
 
     while True:
@@ -180,20 +177,19 @@ def modificarTurista():
                 print("✔ Email actualizado.")
             else:
                 print("No se ingresó un nuevo email. No se realizaron cambios.")
-        
+
         else:
             print("Opción inválida. Intente de nuevo.")
 
     guardar_datos_json(turistas, paquetes, contratos)
     print(f"\nTurista '{idTurista}' modificado con éxito.")
-    return
+    return turistas
 
-def listarTuristasActivos():
+def listarTuristasActivos(turistas, paquetes, contratos):
     """
     Muestra por pantalla todos los turistas activos del sistema.
     Lee los datos del archivo y los muestra en formato de tabla.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
     print("\nListado de turistas activos:")
     print("ID   Nombre         Apellido       DNI         Email                  Teléfonos")
     print("-" * 80)
@@ -209,14 +205,12 @@ def listarTuristasActivos():
     if not hubo_activos:
         print("No hay turistas activos en el sistema.")
     print("-" * 80)
-    return
 
-def eliminarTuristas():
+def eliminarTuristas(turistas, paquetes, contratos):
     """
     Permite desactivar (eliminar lógicamente) un turista del sistema.
     Solicita el ID, pide confirmación y marca el turista como inactivo.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
     print("\n--- ELIMINAR TURISTA ---")
     while True:
         id_turista_eliminar = input("Ingrese el ID del turista que desea eliminar: ").strip()
@@ -226,7 +220,7 @@ def eliminarTuristas():
         try:
             if not turistas[id_turista_eliminar].get("activo", False):
                 print("Error: El turista ya se encuentra inactivo.")
-                return
+                return turistas
             turista = turistas[id_turista_eliminar]
             print(f"\nDatos del turista a eliminar:")
             print(f"  ID: {turista.get('idTurista', '-')}")
@@ -243,7 +237,7 @@ def eliminarTuristas():
             print(f"[ERROR]: El turista tiene datos mal cargados. Detalle: {e}")
             break
     guardar_datos_json(turistas, paquetes, contratos)
-    return
+    return turistas
 
 #----------------------------------------------------------------------------------------------
 # FUNCIONES PARA CREAR PAQUETES
@@ -262,12 +256,11 @@ def cargarServicios():
     servicios["traslado"] = input("Ingrese detalle del traslado (o deje vacío si no tiene): ").strip()
     return servicios
 
-def altaPaquete():
+def altaPaquete(turistas, paquetes, contratos):
     """
     Permite ingresar un nuevo paquete de viaje.
     Solicita los datos principales y los servicios, y guarda el paquete en el archivo.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
     print("\n--- INGRESO DE NUEVO PAQUETE ---")
     nombre = str(input("Ingrese un nombre para el paquete: ")).strip()
     destino = str(input("Ingrese destino del paquete: ")).strip()
@@ -293,15 +286,14 @@ def altaPaquete():
     }
     guardar_datos_json(turistas, paquetes, contratos)
     print(f"\nPaquete '{id_paquete}' creado exitosamente.\n")
-    return
+    return paquetes
 
-def modificarPaquete():
+def modificarPaquete(turistas, paquetes, contratos):
     """
     Permite modificar los datos de un paquete existente.
     Solicita el ID, muestra los datos actuales y permite cambiar los campos seleccionados.
     Guarda los cambios en el archivo.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
     print("\n--- MODIFICAR PAQUETE ---")
     print("\nPaquetes activos disponibles:")
     for idPQT, datos in paquetes.items():
@@ -310,10 +302,10 @@ def modificarPaquete():
     id_paquete = input("\nIngrese el ID del paquete a modificar: ").strip()
     if id_paquete not in paquetes:
         print("El paquete no existe.")
-        return
+        return paquetes
     if not paquetes[id_paquete]["activo"]:
         print("El paquete está inactivo.")
-        return
+        return paquetes
     paquete = paquetes[id_paquete]
     print(f"\nDatos actuales del paquete {id_paquete}:")
     for clave, valor in paquete.items():
@@ -369,7 +361,7 @@ def modificarPaquete():
             print("Opción inválida. Intente de nuevo.")
     guardar_datos_json(turistas, paquetes, contratos)
     print(f"\nPaquete '{id_paquete}' modificado con éxito.")
-    return
+    return paquetes
 
 def cargarServiciosParaModificar(servicios_anteriores):
     """
@@ -383,12 +375,11 @@ def cargarServiciosParaModificar(servicios_anteriores):
         servicios[tipo] = entrada if entrada else anterior
     return servicios
 
-def eliminarPaquete():
+def eliminarPaquete(turistas, paquetes, contratos):
     """
     Permite desactivar (eliminar lógicamente) un paquete del sistema.
     Solicita el ID, pide confirmación y marca el paquete como inactivo.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
     print("\n--- ELIMINAR PAQUETE ---")
     print("\nPaquetes activos disponibles:")
     hay_activos = False
@@ -398,14 +389,14 @@ def eliminarPaquete():
             print(f"- {id_PQT}: {datos['nombre']} | {datos['destino']} ({datos['duracion']})")
     if not hay_activos:
         print("No hay paquetes activos para eliminar.")
-        return
+        return paquetes
     id_paquete = input("\nIngrese el ID del paquete que desea eliminar: ").strip()
     if id_paquete not in paquetes:
         print("Ese paquete no existe.")
-        return
+        return paquetes
     if not paquetes[id_paquete]["activo"]:
         print("Ese paquete ya está inactivo.")
-        return
+        return paquetes
     confirmacion = input(f"¿Está seguro que desea eliminar el paquete '{id_paquete}'? (s/n): ").strip().lower()
     if confirmacion == "s":
         paquetes[id_paquete]["activo"] = False
@@ -413,14 +404,13 @@ def eliminarPaquete():
     else:
         print("Eliminación cancelada.")
     guardar_datos_json(turistas, paquetes, contratos)
-    return
+    return paquetes
 
-def listarPaquetesActivos():
+def listarPaquetesActivos(turistas, paquetes, contratos):
     """
     Muestra por pantalla todos los paquetes activos del sistema.
     Lee los datos del archivo y los muestra con sus detalles.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
     print("\n--- LISTADO DE PAQUETES ACTIVOS ---\n")
     hay_activos = False
     for id_paquete, datos in paquetes.items():
@@ -462,23 +452,22 @@ def mostrarServicios(servicios):
 # Funciones Contrato
 # -------------------------------------
 
-def altaContrato():
+def altaContrato(turistas, paquetes, contratos):
     """
     Permite crear un nuevo contrato de venta de paquete.
     Solicita los datos necesarios, valida y guarda el contrato en el archivo.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
     mediosDePago = ["Efectivo", "Transferencia", "Tarjeta"]
-    _idTurista= (input("Ingrese su ID de turista: "))
-    _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor= verificaIDturista(turistas, _idTurista)
+    _idTurista = (input("Ingrese su ID de turista: "))
+    _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor = verificaIDturista(turistas, _idTurista)
     while _verificaNumeroDeTuristaBool == False:
-        _idTurista= (input("ID turista no válido. Ingrese su ID de turista: "))
-        _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor= verificaIDturista(turistas, _idTurista)
-    _idPaquete= (input("Ingrese el ID del paquete a abonar: "))
-    _verificaNumeroDePaqueteBool, _verificaNumeroDePaqueteValor= verificaIDpaquete(_idPaquete, paquetes)
+        _idTurista = (input("ID turista no válido. Ingrese su ID de turista: "))
+        _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor = verificaIDturista(turistas, _idTurista)
+    _idPaquete = (input("Ingrese el ID del paquete a abonar: "))
+    _verificaNumeroDePaqueteBool, _verificaNumeroDePaqueteValor = verificaIDpaquete(_idPaquete, paquetes)
     while _verificaNumeroDePaqueteBool == False:
-        _idPaquete= (input("Paquete no válido. Ingrese el ID del paquete a abonar: "))
-        _verificaNumeroDePaqueteBool, _verificaNumeroDePaqueteValor= verificaIDpaquete(_idPaquete, paquetes)
+        _idPaquete = (input("Paquete no válido. Ingrese el ID del paquete a abonar: "))
+        _verificaNumeroDePaqueteBool, _verificaNumeroDePaqueteValor = verificaIDpaquete(_idPaquete, paquetes)
     while True:
         entrada = input("Ingrese la cantidad de asistentes: ").strip()
         try:
@@ -487,19 +476,19 @@ def altaContrato():
         except ValueError:
             print("ERROR. Ingrese un número entero válido.")
     cantidadAsistentesValidado = validaCantidadAsistentes(_cantidadDeViajeros)
-    _medioDePago= (input("Ingrese medio de pago a utilizar (Efectivo, Transferencia, Tarjeta): ")).strip().capitalize()
+    _medioDePago = (input("Ingrese medio de pago a utilizar (Efectivo, Transferencia, Tarjeta): ")).strip().capitalize()
     while _medioDePago not in mediosDePago:
         _medioDePago = input("Medio no válido. Ingrese uno de los siguientes (Efectivo, Transferencia, Tarjeta): ").strip().capitalize()
     try:
         _valorPaquete = paquetes[_verificaNumeroDePaqueteValor]["valor"]
     except KeyError:
         print("ERROR: el paquete seleccionado no tiene un valor definido.")
-        return
+        return contratos
     _total = _valorPaquete * cantidadAsistentesValidado
     print("El valor total por",cantidadAsistentesValidado, "personas es de: " ,_total )
-    _fechaDeContrato= datetime.datetime.now()
+    _fechaDeContrato = datetime.datetime.now()
     print(_fechaDeContrato)
-    _idContrato= _fechaDeContrato.strftime("%Y%m%d%H%M%S")
+    _idContrato = _fechaDeContrato.strftime("%Y%m%d%H%M%S")
     print("ID del contrato: ", _idContrato)
     contratos[_idContrato] = {
         "activo": True,
@@ -512,7 +501,7 @@ def altaContrato():
     }
     guardar_datos_json(turistas, paquetes, contratos)
     print("Contrato agregado correctamente.")
-    return
+    return contratos
 
 def verificaIDpaquete(_idPaquete, _paquetes): 
     """
@@ -553,45 +542,34 @@ def verificaIDcontrato(_idContrato, _contratos):
     elif _idContrato not in _contratos or _contratos[_idContrato]["activo"] == False: 
         return False, _idContrato
 
-def bajaContrato():
+def bajaContrato(turistas, paquetes, contratos):
     """
     Permite dar de baja (desactivar) un contrato existente.
     Solicita el ID, valida y marca el contrato como inactivo.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
-    _idTurista= str(input("Ingrese su ID de turista: "))
-    _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor= verificaIDturista(turistas, _idTurista)
-    while _verificaNumeroDeTuristaBool == False:
-        _idTurista= str(input("ID turista no válido. Ingrese su ID de turista: "))
-        _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor= verificaIDturista(turistas, _idTurista)
-    _idContrato= str(input("Ingrese el ID del contrato a dar de baja: "))
-    _verificaNumeroDeContratoBool, _verificaNumeroDeContratoValor= verificaIDcontrato(_idContrato, contratos)
+    _idContrato = str(input("Ingrese el ID del contrato a dar de baja: "))
+    _verificaNumeroDeContratoBool, _verificaNumeroDeContratoValor = verificaIDcontrato(_idContrato, contratos)
+    
     if _verificaNumeroDeContratoBool == True: 
-        _fechaDeBaja= datetime.datetime.now()
+        _fechaDeBaja = datetime.datetime.now()
         print("Cancelado con éxito. Fecha de cancelación: ", _fechaDeBaja)
-        contratos[_idContrato]["activo"]= False
+        contratos[_idContrato]["activo"] = False
         guardar_datos_json(turistas, paquetes, contratos)
         print("Contrato dado de baja correctamente.")
-        return
     else:
         print("Contrato no encontrado. Intente nuevamente.")
-        return
+    return
 
-def modificarContrato():
+def modificarContrato(turistas, paquetes, contratos):
     """
     Permite modificar los datos de un contrato existente.
     Solicita el ID, muestra opciones y actualiza los datos elegidos.
     Guarda los cambios en el archivo.
     """
-    turistas, paquetes, contratos = cargar_datos_json()
-    _fechaDeModificacion= datetime.datetime.now()
-    _idTurista= str(input("Ingrese su ID de turista: "))
-    _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor= verificaIDturista(turistas, _idTurista)
-    while _verificaNumeroDeTuristaBool == False:
-        _idTurista= str(input("ID turista no válido. Ingrese su ID de turista: "))
-        _verificaNumeroDeTuristaBool, _verificaNumeroDeTuristaValor= verificaIDturista(turistas, _idTurista)
-    _idContrato= str(input("Ingrese el ID del contrato a modificar: "))
-    idContratoVerificadoBool, idContratoVerificadoValor= verificaIDcontrato(_idContrato, contratos)
+    _fechaDeModificacion = datetime.datetime.now()
+    _idContrato = str(input("Ingrese el ID del contrato a modificar: "))
+    idContratoVerificadoBool, idContratoVerificadoValor = verificaIDcontrato(_idContrato, contratos)
+    
     if idContratoVerificadoBool == False:
         print("Contrato no encontrado o desactivado. Intente de nuevo.")
     else:
@@ -602,12 +580,13 @@ def modificarContrato():
 [2] Cantidad de personas 
 [3] Forma de pago 
             ''')
-        opcionAmodificar= str(input("Ingrese opción a modificar: "))
+        opcionAmodificar = str(input("Ingrese opción a modificar: "))
         while opcionAmodificar != "1" and opcionAmodificar != "2" and opcionAmodificar != "3":
-            opcionAmodificar= str(input("Opción ingresada no válida. Ingrese opción a modificar: "))
+            opcionAmodificar = str(input("Opción ingresada no válida. Ingrese opción a modificar: "))
+            
         if opcionAmodificar == "1":
             nuevoPaquete = str(input("Ingrese el nuevo ID de paquete: ")).strip()
-            idPaqueteValidadoBool, idPaqueteValidado= verificaIDpaquete(nuevoPaquete, paquetes)
+            idPaqueteValidadoBool, idPaqueteValidado = verificaIDpaquete(nuevoPaquete, paquetes)
             if idPaqueteValidadoBool == True:
                 contrato["idPaquete"] = nuevoPaquete
                 print("Cambio realizado con éxito.")
@@ -615,13 +594,15 @@ def modificarContrato():
                 contrato["Total"] = paquetes[nuevoPaquete]["valor"] * contrato["cantidadDePersonas"]
             else:
                 print("Paquete no encontrado. Intente de nuevo.")
+                
         elif opcionAmodificar == "2":
             nuevaCantidadDePersonas = int(input("Ingrese la nueva cantidadDePersonas: "))
-            nuevaCantidadDePersonaValidado= validaCantidadAsistentes(nuevaCantidadDePersonas)
+            nuevaCantidadDePersonaValidado = validaCantidadAsistentes(nuevaCantidadDePersonas)
             contrato["cantidadDePersonas"] = nuevaCantidadDePersonaValidado
             contrato["fecha"] = _fechaDeModificacion.strftime("%Y.%m.%d %H:%M:%S")
             contrato["Total"] = paquetes[contrato["idPaquete"]]["valor"] * contrato["cantidadDePersonas"]
             print("Cambio realizado con éxito.")
+            
         elif opcionAmodificar == "3":
             print("Formas de pago disponibles: Efectivo, Transferencia, Tarjeta")
             nuevaFormaDePago = input("Ingrese la nueva forma de pago: ").strip().capitalize()
@@ -631,9 +612,9 @@ def modificarContrato():
                 print("Cambio realizado con éxito.")
             else:
                 print("Forma de pago no válida. No se realizó el cambio.")
-                return
+                return contratos
         guardar_datos_json(turistas, paquetes, contratos)
-    return
+    return contratos
 
 #----------------------------------------------------------------------------------------------
 # FUNCIONES DE INFORMES
@@ -971,13 +952,17 @@ def main():
                 print()
                 if sub == "0": break
                 if sub == "1":
-                    ingresarTurista()
+                    turistas, paquetes, contratos = cargar_datos_json()
+                    turistas = ingresarTurista(turistas, paquetes, contratos)
                 elif sub == "2":
-                    modificarTurista()
+                    turistas, paquetes, contratos = cargar_datos_json()
+                    turistas = modificarTurista(turistas, paquetes, contratos)
                 elif sub == "3":
-                    eliminarTuristas()
+                    turistas, paquetes, contratos = cargar_datos_json()
+                    turistas = eliminarTuristas(turistas, paquetes, contratos)
                 elif sub == "4":
-                    listarTuristasActivos()
+                    turistas, paquetes, contratos = cargar_datos_json()
+                    listarTuristasActivos(turistas, paquetes, contratos)
                 input("\nENTER para continuar.")
         elif opcion == "2":
             while True:
@@ -1002,13 +987,17 @@ def main():
                 if sub == "0":
                     break
                 elif sub == "1":
-                    altaPaquete()
+                    turistas, paquetes, contratos = cargar_datos_json()
+                    paquetes = altaPaquete(turistas, paquetes, contratos)
                 elif sub == "2":
-                    modificarPaquete()
+                    turistas, paquetes, contratos = cargar_datos_json()
+                    paquetes = modificarPaquete(turistas, paquetes, contratos)
                 elif sub == "3":
-                    eliminarPaquete()
+                    turistas, paquetes, contratos = cargar_datos_json()
+                    paquetes = eliminarPaquete(turistas, paquetes, contratos)
                 elif sub == "4":
-                    listarPaquetesActivos()
+                    turistas, paquetes, contratos = cargar_datos_json()
+                    listarPaquetesActivos(turistas, paquetes, contratos)
                 input("\nENTER para continuar.")
         elif opcion == "3":
             while True:
@@ -1030,11 +1019,14 @@ def main():
                 print()
                 if sub == "0": break
                 if sub == "1":
-                    altaContrato()
+                    turistas, paquetes, contratos = cargar_datos_json()
+                    contratos = altaContrato(turistas, paquetes, contratos)
                 elif sub == "2":
-                    bajaContrato()
+                    turistas, paquetes, contratos = cargar_datos_json()
+                    contratos = bajaContrato(turistas, paquetes, contratos)
                 elif sub == "3":
-                    modificarContrato()
+                    turistas, paquetes, contratos = cargar_datos_json()
+                    contratos = modificarContrato(turistas, paquetes, contratos)
                 input("\nENTER para continuar.")
         elif opcion == "4":
             while True:
@@ -1065,7 +1057,6 @@ def main():
                 elif sub == "4":
                     informePaquetesPorVentas()
                 input("\nENTER para continuar.")
-        input("\nENTER para volver al menú principal.")
 
 if __name__ == "__main__":
     main()
