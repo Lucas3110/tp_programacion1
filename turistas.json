@@ -1,0 +1,132 @@
+{
+    "1": {
+        "idTurista": "1",
+        "activo": true,
+        "nombre": "Virginia",
+        "apellido": "Griego",
+        "dni": "14.309.227",
+        "email": "griegomavi@hotmail.com",
+        "telefonos": {
+            "telefono1": "5491144902357",
+            "telefono2": "43132662",
+            "telefono3": "43034562"
+        }
+    },
+    "2": {
+        "idTurista": "2",
+        "activo": true,
+        "nombre": "Agostina",
+        "apellido": "Griego",
+        "dni": "36.314.353",
+        "email": "griegoagos@hotmail.com",
+        "telefonos": {
+            "telefono1": "5491144905848",
+            "telefono2": "43132662",
+            "telefono3": ""
+        }
+    },
+    "3": {
+        "idTurista": "3",
+        "activo": true,
+        "nombre": "Fernando",
+        "apellido": "Lopez",
+        "dni": "3.699.227",
+        "email": "lopezfernando@hotmail.com",
+        "telefonos": {
+            "telefono1": "5491144927437",
+            "telefono2": "43136662",
+            "telefono3": "43132662"
+        }
+    },
+    "4": {
+        "idTurista": "4",
+        "activo": true,
+        "nombre": "Daniel",
+        "apellido": "Lopez",
+        "dni": "14.456.697",
+        "email": "danielopez@hotmail.com",
+        "telefonos": {
+            "telefono1": "5491199657842",
+            "telefono2": "43132662",
+            "telefono3": "43132662"
+        }
+    },
+    "5": {
+        "idTurista": "5",
+        "activo": true,
+        "nombre": "Martina",
+        "apellido": "Sanchez",
+        "dni": "40.536.846",
+        "email": "martinasanchez@hotmail.com",
+        "telefonos": {
+            "telefono1": "54911996084737",
+            "telefono2": "43032662",
+            "telefono3": ""
+        }
+    },
+    "6": {
+        "idTurista": "6",
+        "activo": true,
+        "nombre": "Valentina",
+        "apellido": "Dominguez",
+        "dni": "40.589.659",
+        "email": "valendominguez@hotmail.com",
+        "telefonos": {
+            "telefono1": "5491159608477",
+            "telefono2": "43014810",
+            "telefono3": "43189756"
+        }
+    },
+    "7": {
+        "idTurista": "7",
+        "activo": true,
+        "nombre": "Milagros",
+        "apellido": "Pliego",
+        "dni": "41.587.986",
+        "email": "milipliego@hotmail.com",
+        "telefonos": {
+            "telefono1": "5491156978562",
+            "telefono2": "43732662",
+            "telefono3": "43874562"
+        }
+    },
+    "8": {
+        "idTurista": "8",
+        "activo": true,
+        "nombre": "Camila",
+        "apellido": "Gennaro",
+        "dni": "41.897.988",
+        "email": "camigennaro@hotmail.com",
+        "telefonos": {
+            "telefono1": "5491156978562",
+            "telefono2": "43874562",
+            "telefono3": "43874562"
+        }
+    },
+    "9": {
+        "idTurista": "9",
+        "activo": true,
+        "nombre": "Daniela",
+        "apellido": "Savino",
+        "dni": "40.589.698",
+        "email": "danisavino@hotmail.com",
+        "telefonos": {
+            "telefono1": "5491159608765",
+            "telefono2": "43014896",
+            "telefono3": ""
+        }
+    },
+    "10": {
+        "idTurista": "10",
+        "activo": true,
+        "nombre": "Agustina",
+        "apellido": "Yarussi",
+        "dni": "40.986.689",
+        "email": "agusyarussi@hotmail.com",
+        "telefonos": {
+            "telefono1": "5491159608477",
+            "telefono2": "43014810",
+            "telefono3": ""
+        }
+    }
+}
