@@ -183,7 +183,7 @@ def ingresar_turista():
     }
 
     escribir_datos_json(ARCHIVO_TURISTAS, turistas)
-    print("\nTurista '{nombre} {apellido}' agregado con éxito con ID: {nuevo_id}")
+    print("\nTurista agregado con éxito")
 
 def modificar_turista():
     """
@@ -317,7 +317,7 @@ def cargar_paquete():
     }
 
     escribir_datos_json(ARCHIVO_PAQUETES, paquetes)
-    print(f"\nPaquete '{nombre}' agregado con éxito con ID: {nuevo_id}")
+    print("\nPaquete agregado con éxito")
 
 def modificar_paquete():
     """
@@ -465,7 +465,7 @@ def alta_contrato():
     }
 
     escribir_datos_json(ARCHIVO_CONTRATOS, contratos)
-    print(f"\nContrato generado con éxito. Total")
+    print(f"\nContrato generado con éxito.")
 
 def baja_contrato():
     """
