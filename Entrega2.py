@@ -86,6 +86,13 @@ def validar_email(email):
 def validar_solo_letras(texto):
     """
     Valida que una cadena contenga solo letras y espacios.
+    
+    Parámetros:
+    texto (str): Cadena de texto a validar.
+
+    Retorna:
+    bool: True si la cadena contiene solo letras y espacios, False en caso contrario.
+    
     """
     for caracter in texto:
         if not (caracter.isalpha() or caracter.isspace()):
@@ -95,6 +102,12 @@ def validar_solo_letras(texto):
 def validar_dni(texto):
     """
     Valida que una cadena contenga solo números y opcionalmente puntos.
+
+    Parámetros:
+    texto (str): Cadena de texto que se desea validar como posible número de DNI.
+
+    Retorna:
+    bool: True si la cadena contiene únicamente dígitos y/o puntos; False en caso contrario.
     """
     for caracter in texto:
         if not (caracter.isdigit() or caracter == '.'):
@@ -104,6 +117,12 @@ def validar_dni(texto):
 def generar_id(diccionario):
     """
     Genera un nuevo ID numérico autoincremental como string.
+    
+    Parámetros:
+    diccionario (dict): Diccionario cuyas claves representan IDs numéricos como strings.
+
+    Retorna:
+    str: Nuevo ID numérico autoincremental como cadena.
     """
     if not diccionario:
         return "1"
@@ -118,7 +137,15 @@ def generar_id(diccionario):
 
 def solicitar_numero(mensaje, tipo_dato=int):
     """
-    Solicita un número al usuario y lo valida.
+    Solicita un número al usuario y lo valida. En caso de error, 
+    vuelve a solicitar el ingreso hasta que sea válido.
+    
+    Parámetros:
+    mensaje (str): Mensaje que se muestra al usuario para solicitar el valor.
+    tipo_dato (type, opcional): Tipo al que se desea convertir el valor ingresado (por defecto, int).
+
+    Retorna:
+    tipo_dato: Valor ingresado convertido al tipo de dato especificado.
     """
     while True:
         try:
@@ -188,6 +215,9 @@ def ingresar_turista():
 def modificar_turista():
     """
     Permite modificar los datos de un turista existente.
+    Solicita al usuario el ID del turista a modificar, si es válido y el turista está activo,
+    permite modificar su nombre, apellido y/o correo electrónico. 
+    Guarda los cambios en el archivo JSON.
     """
     print("\n--- Modificar Turista ---")
     turistas = leer_datos_json(ARCHIVO_TURISTAS)
