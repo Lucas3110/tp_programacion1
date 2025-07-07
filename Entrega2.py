@@ -195,7 +195,7 @@ def ingresar_turista(turistas):
         if validar_email(email):
             break
         else:
-            print("Error: Formato de email inválido. Ejemplo: 'nombre@dominio.com'.")
+            print("Error: Formato de email inválido. Ejemplo: 'nombre@apellido.com'.")
 
     telefonos_nuevos = {}
     for i in range(1, 4):
